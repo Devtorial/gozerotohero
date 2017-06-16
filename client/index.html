@@ -1,0 +1,313 @@
+<html>
+<head>
+  <title>Go Zero to Hero</title>
+  <script src="https://unpkg.com/vue@2.3.4/dist/vue.min.js"></script>
+  <script src="https://unpkg.com/axios@0.16.2/dist/axios.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"></link>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"></link>
+  <link rel="stylesheet" href="tooltip-theme-arrows.css"></link>
+  <style>
+    .navbar-brand {
+      margin-top: -13px;
+    }
+    h1 {
+      font-size: 14pt;
+      margin-top: 10px;
+    }
+    form {
+      display: inline-block;
+    }
+    .fa {
+      font-size: 15pt;
+    }
+    #app {
+      margin: 60px auto 0 auto;
+      width: 988px;
+    }
+    .leftnav {
+      width: 180px;
+      position: fixed;
+    }
+    .feed {
+      width: 500px;
+      float: left;
+      margin-left: 180px;
+    }
+    .rightnav {
+      width: 308px;
+      position: fixed;
+      margin-left: 680px;
+    }
+    .list-group-item {
+      margin-top: 10px;
+      padding: 0;
+      position: relative; 
+      display: block;
+      margin-bottom: -1px;
+      border: 1px solid #ddd;
+    }
+    .avatar {
+      float: left;
+      width: 40px;
+      margin-right: 10px;
+    }
+    .date {
+      font-size: 12px;
+    }
+    .post {
+      padding: 10px 15px;
+    }
+    .react {
+      width: 100%;
+      border-top: 1px solid #ddd;
+      margin-top: 10px;
+    }
+    .react .fa {
+      font-size: 12pt;
+    }
+    .react > span {
+      display: inline-block;
+      margin-top: 10px;
+      margin-right: 20px;
+    }
+
+    .message {
+      clear: both;
+      margin-top: 5px;
+      font-size: 15px;
+    }
+    .comments {
+      padding: 10px 15px;
+      background-color: #eee;
+    }
+    .comments .summary {
+      width: 100%;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+    }
+    .comments > ul  {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+    }
+    .comment {
+      margin-top: 5px;
+      font-size: 13px;
+    }
+    .comment .avatar {
+      width: 32px;
+    }
+    .comment > div {
+      margin-left: 40px;
+    }
+    .reply > ul {
+      margin: 10px 0 0 0;
+      padding: 0;
+      list-style-type: none;
+    }
+
+    .tooltip {
+      display: block !important;
+      padding: 4px;
+      z-index: 10000;
+      width: 375px;
+    }
+    .tooltip .tooltip-inner {
+      background: #ddd;
+      color: white;
+      padding: 5px 10px 4px;
+    }
+
+    .tooltip tooltip-arrow{
+      display: none;
+    }
+
+    .tooltip[aria-hidden='true'] {
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity .15s, visibility .15s;
+    }
+
+    .tooltip[aria-hidden='false'] {
+      visibility: visible;
+      opacity: 1;
+      transition: opacity .15s;
+    }
+    #card {
+      width: 370px;
+      z-index: 10000;
+      border: 1px solid #ddd;
+      background: url('flag.jpg');
+      background-size: 370px 137px;
+      background-repeat: no-repeat;
+      background-color: #FFF;
+      position: absolute;
+    }
+    #card > img {
+      width: 100px;
+      float: left;
+      margin: 90px 8px 40px 10px;
+      padding: 5px;
+      border: 1px solid #bbb;
+      background-color: #FFF;
+    }
+    #card .user {
+      margin: 100px 10px 0 110px;
+    }
+    #card .name {
+      color: #fff;
+      font-size: 16px;
+      font-weight: 900;
+      text-shadow: 1px 1px 2px #000;
+    }
+    #card .footer {
+      background-color: #ddd;
+      clear: both;
+      height: 30px;
+      padding: 5px 0 0 60px;
+    }
+    #card .statuses {
+      margin: 25px 10px 0 16px;
+      font-size: 12px;
+    }
+    #card .status {
+      margin-bottom: 10px;
+    }
+    #card .fa, .card .footer {
+      font-size: 12px;
+    }
+    .status .fa {
+      float: left;
+    }
+    .status .action {
+      margin-left: 20px;
+      width: 210px;
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class=container>
+      <div class=navbar-header>
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class=navbar-brand href="/"><img src="https://www.delltechnologies.com/content/dam/delltechnologies/images/brands/logo-virtustream.png" alt="Devtorial logo" height="50"></a>
+      </div>
+      
+      <div class="collapse navbar-collapse" id="navbar-collapse">
+        <form class="navbar-form" role="search">
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="Search">
+            <span class="input-group-btn">
+              <button type="submit" class="btn btn-default"><i class="fa fa-search"></i> <span class="sr-only">Submit</span></button>
+            </span>
+          </div>
+        </form>
+
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="/calendar" role="button">Me</a></li>
+          <li><a href="/" role="button">Home</a></li>
+          <li><a href="/friends" role="button"><i class="fa fa-user" title="Friends"></i></a></li>
+          <li><a href="/messages" role="button"><i class="fa fa-comments-o" title="Messages"></i></a></li>
+          <li><a href="/notifications" role="button"><i class="fa fa-bell" title="Notifications"></i></a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <div id="app">
+    <div class="leftnav">
+      <h1>News Feed</h1>
+    </div>
+    <div class="feed">
+      <div class="data" v-show="data">
+        <ul class="list-group">
+          <li class="list-group-item" v-for="item in data">
+            <div class="post">
+              <img :src="thumbPrefix + item.ImageURLSuffix" class="avatar" />
+              <div><a :href="'/user/'+item.UserID" data-html="true" v-bind:data-title="getTooltip(item)" v-on:mouseenter="mouseover($event.target, item)" v-on:mouseout="mouseout()">{{ item.Name }}</a></div>
+              <div class="date">{{ item.PostDate }}</div>
+              <div class="message">{{ item.Post }}</div>
+              <div class="react">
+                <span><i class="fa fa-thumbs-o-up" title="Like"></i> Like</span>
+                <span><i class="fa fa-comment-o" title="Comment"></i> Comment</span>
+              </div>
+            </div>
+            <div class="comments" v-if="item.Comments.length > 0">
+              <div class="summary">
+                <a :href="item.Comments[0].Name" v-tooltip="getTooltip(item.Comments[0])">{{ item.Comments[0].Name }}</a> and <a href="details">{{ item.Comments.length }} others</details>
+              </div>
+              <ul>
+                <li v-for="comment in item.Comments">
+                  <div class="comment">
+                    <img :src="thumbPrefix + comment.ImageURLSuffix" class="avatar" />
+                    <div>
+                      <a :href="'/user/'+comment.UserID" v-tooltip="getTooltip(comment)">{{ comment.Name }}</a> {{ comment.Post }}
+                      <div>
+                        <span><a href="like">Like</a></span>
+                        <span><a href="reply">Reply</a></span>
+                        {{ comment.PostDate }}
+                      </div>
+                    </div>
+                    <div class="reply">
+                      <ul>
+                        <li v-for="reply in comment.Comments">
+                          <div class="reply">
+                            <img :src="thumbPrefix + reply.ImageURLSuffix" class="avatar" />
+                            <div>
+                              <a :href="'/user/'+reply.UserID" v-tooltip="getTooltip(reply)">{{ reply.Name }}</a> {{ reply.Post }}
+                              <div>
+                                <span><a href="like">Like</a></span>
+                                <span><a href="reply">Reply</a></span>
+                                {{ reply.PostDate }}
+                              </div>
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </li>
+      </div>
+    </div>
+    <div class="rightnav">
+      <h1>Your Pages</h1>
+      <h1>Event Invites</h1>
+    </div>
+    <div id="card" v-show="tooltipVisible">
+      <img :src="this.largePrefix + selected.ImageURLSuffix"/>
+      <div class="user">
+        <div class="name">{{selected.Name}}</div>
+        <div class="statuses">
+          <div class="status">
+            <i class="fa fa-map-marker"></i>
+            <div class="action">
+              Visited <a href="https://www.google.com/maps/place/Burbank,+CA">Burbank, California</a>
+              <div class="time">on Monday</div>
+            </div>
+          </div>
+          <div class="status">
+            <i class="fa fa-user"></i>
+            <div class="action">80 mutual friends including <a :href="'/user/'+selected.UserID">Person 1</a></div>
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        <button><i class="fa fa-check"></i> Friends <i class="fa fa-sort-down"></i></button>
+        <button><i class="fa fa-check"></i> Following <i class="fa fa-sort-down"></i></button>
+        <button><i class="fa fa-comments-o"></i> Message</button>
+      </div>
+    </div>
+  </div>
+    
+  <script src="index.js"></script>
+</body>
+</html>
