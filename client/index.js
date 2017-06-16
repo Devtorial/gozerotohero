@@ -14,7 +14,7 @@ new Vue({
     data: [],
     hoveringOver: undefined,
     selected: {},
-    tooltipVisible: true,
+    tooltipVisible: false,
     medPrefix: "https://randomuser.me/api/portraits/med/",
     largePrefix: "https://randomuser.me/api/portraits/",
     thumbPrefix: "https://randomuser.me/api/portraits/thumb/",
@@ -66,31 +66,33 @@ new Vue({
     },
     mouseover(el, user) {
       this.hoveringOver = el;
-      setTimeout(this.toggleTooltip(this, el, user), 750)
+      this.selected = user;
+      setTimeout(this.showTooltip(this, el, user), 750)
     },
     mouseout() {
       this.hoveringOver = undefined;
       this.tooltipVisible = false;
     },
-    toggleTooltip(vm, el, user) {
+    showTooltip(vm, el, user) {
       return function() {
+        if (vm.hoveringOver !== el) { // not same element so exit
+          return;
+        }
+
         let headerHeight = 50;
         let margin = 20;
-        if (vm.hoveringOver) {
-          vm.selected = user;
-          vm.tooltipVisible = true;
+        vm.tooltipVisible = true;
           
-          // run on next tick so that card will already be visible. Otherwise the height of the rectangle is 0
-          Vue.nextTick(function () {
-            let rect = el.getBoundingClientRect();
-            let card = document.getElementById('card')
-            let cardHeight = card.getBoundingClientRect().height;
-            let displayAbove = window.innerHeight - rect.bottom <= rect.top - headerHeight;
+        // run on next tick so that card will already be visible. Otherwise the height of the rectangle is 0
+        Vue.nextTick(function () {
+          let rect = el.getBoundingClientRect();
+          let card = document.getElementById('card')
+          let cardHeight = card.getBoundingClientRect().height;
+          let displayAbove = window.innerHeight - rect.bottom <= rect.top - headerHeight;
 
-            card.style.top = displayAbove ? rect.top + window.pageYOffset - cardHeight - margin : rect.bottom + window.pageYOffset + margin;
-            card.style.left = rect.left;
-          })
-        }
+          card.style.top = displayAbove ? rect.top + window.pageYOffset - cardHeight - margin : rect.bottom + window.pageYOffset + margin;
+          card.style.left = rect.left;
+        })
       }
     }
   },

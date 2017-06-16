@@ -5,7 +5,6 @@
   <script src="https://unpkg.com/axios@0.16.2/dist/axios.min.js"></script>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"></link>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"></link>
-  <link rel="stylesheet" href="tooltip-theme-arrows.css"></link>
   <style>
     .navbar-brand {
       margin-top: -13px;
@@ -230,7 +229,7 @@
           <li class="list-group-item" v-for="item in data">
             <div class="post">
               <img :src="thumbPrefix + item.ImageURLSuffix" class="avatar" />
-              <div><a :href="'/user/'+item.UserID" data-html="true" v-bind:data-title="getTooltip(item)" v-on:mouseenter="mouseover($event.target, item)" v-on:mouseout="mouseout()">{{ item.Name }}</a></div>
+              <div><a :href="'/user/'+item.UserID" v-on:mouseenter="mouseover($event.target, item)" v-on:mouseout="mouseout()">{{ item.Name }}</a></div>
               <div class="date">{{ item.PostDate }}</div>
               <div class="message">{{ item.Post }}</div>
               <div class="react">
@@ -240,14 +239,14 @@
             </div>
             <div class="comments" v-if="item.Comments.length > 0">
               <div class="summary">
-                <a :href="item.Comments[0].Name" v-tooltip="getTooltip(item.Comments[0])">{{ item.Comments[0].Name }}</a> and <a href="details">{{ item.Comments.length }} others</details>
+                <a :href="item.Comments[0].Name" v-on:mouseenter="mouseover($event.target, item.Comments[0])" v-on:mouseout="mouseout()">{{ item.Comments[0].Name }}</a> and <a href="details">{{ item.Comments.length }} others</details>
               </div>
               <ul>
                 <li v-for="comment in item.Comments">
                   <div class="comment">
                     <img :src="thumbPrefix + comment.ImageURLSuffix" class="avatar" />
                     <div>
-                      <a :href="'/user/'+comment.UserID" v-tooltip="getTooltip(comment)">{{ comment.Name }}</a> {{ comment.Post }}
+                      <a :href="'/user/'+comment.UserID" v-on:mouseenter="mouseover($event.target, comment)" v-on:mouseout="mouseout()">{{ comment.Name }}</a> {{ comment.Post }}
                       <div>
                         <span><a href="like">Like</a></span>
                         <span><a href="reply">Reply</a></span>
@@ -260,7 +259,7 @@
                           <div class="reply">
                             <img :src="thumbPrefix + reply.ImageURLSuffix" class="avatar" />
                             <div>
-                              <a :href="'/user/'+reply.UserID" v-tooltip="getTooltip(reply)">{{ reply.Name }}</a> {{ reply.Post }}
+                              <a :href="'/user/'+reply.UserID" v-on:mouseenter="mouseover($event.target, reply)" v-on:mouseout="mouseout()">{{ reply.Name }}</a> {{ reply.Post }}
                               <div>
                                 <span><a href="like">Like</a></span>
                                 <span><a href="reply">Reply</a></span>
