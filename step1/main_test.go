@@ -21,13 +21,13 @@ func TestCreatePostAndComments(t *testing.T) {
 	rand.Seed(1) // this will make it so the "random" values are the same every run
 	users, _ := getRandomUserData()
 	post := createPostAndComments(users, time.Now())
-	if post.ImageURLSuffix != "men/13.jpg" || post.Name != "Raul Wade" || post.PostDate != "3 hrs" || len(post.Comments) != 2 {
+	if post.ImageURLSuffix != "men/13.jpg" || post.Name != "Raul Wade" || post.PostDate != time.Now().Add(-170*time.Minute) || len(post.Comments) != 2 {
 		t.Error("expected values not returned", post.ImageURLSuffix, post.Name, post.PostDate, len(post.Comments))
 	}
 
 	rand.Seed(96) // try a different random seed to get different results
 	post = createPostAndComments(users, time.Now())
-	if post.ImageURLSuffix != "women/91.jpg" || post.Name != "Avery Miller" || post.PostDate != "2 hrs" || len(post.Comments) != 3 ||
+	if post.ImageURLSuffix != "women/91.jpg" || post.Name != "Avery Miller" || post.PostDate != time.Now().Add(-90*time.Minute) || len(post.Comments) != 3 ||
 		len(post.Comments[0].Comments) != 1 {
 		t.Error("expected values not returned", post.ImageURLSuffix, post.Name, post.PostDate, len(post.Comments))
 	}

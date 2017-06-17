@@ -34,11 +34,12 @@ type picture struct {
 }
 
 type feedData struct {
+	PostID         int
 	UserID         int
 	Name           string
 	ImageURLSuffix string
 	Post           string
-	PostDate       string
+	PostDate       time.Time
 	Comments       []feedData
 }
 
@@ -112,18 +113,13 @@ func createPostAndComments(people []person, timeAfter time.Time) *feedData {
 }
 
 func createPost(userID int, person *person, postDate time.Time, maxLength int) *feedData {
-	dateString := postDate.Format("Jan 2 at 3:04pm")
-	timeSince := time.Now().Sub(postDate)
 	imageURLSuffix := strings.SplitAfter(person.Picture.Thumbnail, "thumb/")[1]
-	if timeSince < 24*time.Hour {
-		dateString = fmt.Sprintf("%.0f hrs", timeSince.Hours())
-	}
 	return &feedData{
 		UserID:         userID,
 		Name:           strings.Title(person.Name.First) + " " + strings.Title(person.Name.Last),
 		ImageURLSuffix: imageURLSuffix,
 		Post:           lorem.Paragraph(1, maxLength),
-		PostDate:       dateString,
+		PostDate:       postDate,
 	}
 }
 

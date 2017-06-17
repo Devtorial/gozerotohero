@@ -14,7 +14,8 @@ new Vue({
     data: [],
     hoveringOver: undefined,
     selected: {},
-    tooltipVisible: false,
+    cardPopup: { visible: false, elementId: 'cardPopup' },
+    reactPopup: { visible: false, elementId: 'reactPopup', preferredLocation: 'top' },
     medPrefix: "https://randomuser.me/api/portraits/med/",
     largePrefix: "https://randomuser.me/api/portraits/",
     thumbPrefix: "https://randomuser.me/api/portraits/thumb/",
@@ -42,58 +43,57 @@ new Vue({
         this.error = err.response.data;
       });
     },
-    getTooltip(user) {
-      let content = 
-`<div class="card">
-   <img src="${this.largePrefix}${user.ImageURLSuffix}"/>
-   <div class="user">
-    <div class="name">${user.Name}</div>
-    <div class="followers>1256 followers</div>
-    <div class="location">
-      <i class="fa fa-map-marker"></i>Visited <a href="https://www.google.com/maps/place/Burbank,+CA">Burbank, California</a>
-      on Monday
-    </div>
-    <div class="friends">
-      <i class="fa fa-persons"></i>80 mutual friends including <a href="/user/${user.UserID}">Person 1</a>
-    </div>
-    <div class="footer">
-      <button><i class="fa fa-check"></i> Friends <i class="fa fa-sort-down"></i></button>
-      <button><i class="fa fa-check"></i> Following <i class="fa fa-sort-down"></i></button>
-      <button><i class="fa fa-comments-o"></i> Message</button>
-    </div>
-</div>`;
-      return content;
+    waitPopup(el, data, config) {
+      config.hoveringOver = el;
+      this.selected = data;
+      var delay = config.inDelay || 750;
+      setTimeout(this.showPopup(el, config), delay);
     },
-    mouseover(el, user) {
-      this.hoveringOver = el;
-      this.selected = user;
-      setTimeout(this.showTooltip(this, el, user), 750)
+    waitClearPopup(config) {
+      config.hoveringOver = undefined;
+      var delay = config.outDelay || 750;
+      setTimeout(this.clearPopup(config), delay);
     },
-    mouseout() {
-      this.hoveringOver = undefined;
-      this.tooltipVisible = false;
-    },
-    showTooltip(vm, el, user) {
+    clearPopup(config) {
       return function() {
-        if (vm.hoveringOver !== el) { // not same element so exit
+        if (!config.hoveringOver) {
+          config.visible = false;
+        }
+      }
+    },
+    showPopup(el, config) {
+      return function() {
+        if (config.hoveringOver != el) {  // not same element so exit
           return;
         }
 
         let headerHeight = 50;
         let margin = 20;
-        vm.tooltipVisible = true;
+        config.visible = true
           
-        // run on next tick so that card will already be visible. Otherwise the height of the rectangle is 0
+        // run on next tick so that popup will already be visible. Otherwise the height of the rectangle is 0
         Vue.nextTick(function () {
           let rect = el.getBoundingClientRect();
-          let card = document.getElementById('card')
-          let cardHeight = card.getBoundingClientRect().height;
-          let displayAbove = window.innerHeight - rect.bottom <= rect.top - headerHeight;
+          let popup = document.getElementById(config.elementId)
+          let popupHeight = popup.getBoundingClientRect().height;
+          let displayAbove = config.preferredLocation === 'top' ? rect.top - headerHeight > margin + popupHeight : window.innerHeight - rect.bottom <= rect.top - headerHeight;
 
-          card.style.top = displayAbove ? rect.top + window.pageYOffset - cardHeight - margin : rect.bottom + window.pageYOffset + margin;
-          card.style.left = rect.left;
+          popup.style.top = displayAbove ? rect.top + window.pageYOffset - popupHeight - margin : rect.bottom + window.pageYOffset + margin;
+          popup.style.left = rect.left;
         })
       }
     }
   },
+})
+
+Vue.filter('relativeDate', function(value) {
+  if (value) {
+    return moment(String(value)).fromNow()
+  }
+})
+
+Vue.filter('formatDate', function(value) {
+  if (value) {
+    return moment(String(value)).format('dddd MMMM Do, YYYY [at] h:mma');
+  }
 })
