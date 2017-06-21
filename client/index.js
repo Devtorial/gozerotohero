@@ -8,6 +8,8 @@ new Vue({
     this.getPages();
     this.getTrending();
     this.getEvents();
+    this.getShortcuts();
+    this.getExplores();
     this.getAds();
     window.addEventListener('scroll', this.handleScroll);
   },
@@ -23,6 +25,8 @@ new Vue({
     trendingCategory: 'News',
     events: [],
     ads: [],
+    shortcuts: [],
+    explores: [],
     me: undefined,
     hoveringOver: undefined,
     selected: {},
@@ -41,7 +45,7 @@ new Vue({
       let html = document.documentElement;
       let docHeight = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight); // how jquery calculates document height
 
-      if (window.pageYOffset < 1000) {
+      if (window.pageYOffset < 300) {
         rightnav.style.top = -window.pageYOffset + 60;
       }
 
@@ -84,6 +88,20 @@ new Vue({
     getEvents() {
       axios.get('/api/trending').then((response) => {
         this.trending = response.data;
+      }).catch((response) => {
+        console.log("error", response);
+      });
+    },
+    getShortcuts() {
+      axios.get('/api/shortcuts').then((response) => {
+        this.shortcuts = response.data;
+      }).catch((response) => {
+        console.log("error", response);
+      });
+    },
+    getExplores() {
+      axios.get('/api/explores').then((response) => {
+        this.explores = response.data;
       }).catch((response) => {
         console.log("error", response);
       });

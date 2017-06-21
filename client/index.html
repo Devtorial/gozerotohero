@@ -27,6 +27,7 @@
     .leftnav {
       width: 180px;
       position: fixed;
+      padding-top: 10px;
     }
     .feed {
       width: 500px;
@@ -235,7 +236,7 @@
           </form>
 
           <ul class="nav navbar-nav navbar-right">
-            <li v-if="me"><a href="/calendar" role="button" title="Profile"><img class="miniprofile" :src="me.Picture.Thumbnail"/> {{me.Name.First}}</a></li>
+            <li v-if="me"><a href="/user/userID" role="button" title="Profile"><img class="miniprofile" :src="me.Picture.Thumbnail"/> {{me.Name.First}}</a></li>
             <li><a href="/" role="button">Home</a></li>
             <li><a href="/friends" role="button"><i class="fa fa-user" title="Friends"></i></a></li>
             <li><a href="/messages" role="button"><i class="fa fa-comments-o" title="Messages"></i></a></li>
@@ -246,7 +247,21 @@
     </nav>
     <div class="page">
       <div class="leftnav">
-        <h1>News Feed</h1>
+        <div v-if="me"><a href="/user/userID" role="button" :title="me.Name.First + ' ' + me.Name.Last"><img class="miniprofile" :src="me.Picture.Thumbnail"/> {{me.Name.First + ' ' + me.Name.Last}}</a></div>
+        <div>News Feed</div>
+        <div>Messenger</div>
+        <div>Shortcuts</div>
+        <div>
+          <ul>
+            <li v-for="item in shortcuts"><a :href="item.URL">{{item.Name || truncate(17)}}</a></li>
+          </ul>
+        </div>
+        <div>Explore</div>
+        <div>
+          <ul>
+            <li v-for="item in explores"><i :class="'fa '+item.Icon"></i> <a :href="item.URL">{{item.Name || truncate(17)}}</a></li>
+          </ul>
+        </div>
       </div>
       <div class="feed">
         <div class="data" v-show="data">
@@ -314,6 +329,14 @@
           <div class="title">Your Pages</div>
           <div v-if="pages[selectedPageIndex]">
             <a :href="'/pages/' + selectedPageIndex" v-on:mouseenter="waitPopup($event.target, pages[selectedPageIndex], pagePopup)" v-on:mouseleave="waitClearPopup(pagePopup)">{{ pages[selectedPageIndex].Name }}</a>
+            <span title="Messages"><a href="/messages" role="button"><i class="fa fa-comments-o"></i> Messages</a></span>
+            <span title="Notifications"><a href="/notifications" role="button"><i class="fa fa-bell"></i> Notifications</a></span>
+            <div>
+              <span title="Publish"><i class="fa fa-edit"></i> Publish</span>
+              <span title="Photo"><i class="fa fa-camera"></i> Photo</span>
+              <span title="Event"><i class="fa fa-calendar-o"></i> Event</span>
+              <span title="Promote"><i class="fa fa-bullhorn"></i> Promote</span>
+            </div>
           </div>
           <div v-else>Loading</div>
         </div>

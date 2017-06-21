@@ -76,6 +76,8 @@ func main() {
 	router.GET("/api/events", getEvents)
 	router.GET("/api/trending", getTrending(trending))
 	router.GET("/api/ads", getAds)
+	router.GET("/api/shortcuts", getShortcuts)
+	router.GET("/api/explores", getExplores)
 	router.NotFound = http.FileServer(http.Dir("../client")) // html client
 	log.Fatal(http.ListenAndServe(":1234", router))
 }
@@ -194,6 +196,16 @@ func getAds(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	outputMessage(w, string(jsonText), err)
 }
 
+func getShortcuts(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	jsonText, err := json.Marshal(shortcuts)
+	outputMessage(w, string(jsonText), err)
+}
+
+func getExplores(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	jsonText, err := json.Marshal(explores)
+	outputMessage(w, string(jsonText), err)
+}
+
 func createMultiplePosts(people []person, timeAfter time.Time, numPosts int) []feedData {
 	feed := make([]feedData, 10)
 	for i := 0; i < numPosts; i++ {
@@ -250,13 +262,62 @@ func getRandomPersonAndDate(people []person, timeAfter time.Time) (*person, time
 	return &people[i], timeAfter.Add(-time.Duration(i) * time.Minute)
 }
 
-var ads = struct {
+var shortcuts = []struct {
+	Name     string
+	URL      string
+	ImageURL string
+}{
+	{Name: "Ensign Symphony & Chorus", URL: "https://www.facebook.com/seattleensign/", ImageURL: ""},
+	{Name: "EndFirst", URL: "https://www.facebook.com/endfirstcorp/", ImageURL: ""},
+	{Name: "Devtorial", URL: "https://www.facebook.com/Devtorial-1931897723758457/", ImageURL: ""},
+	{Name: "Lindsey Stirling", URL: "https://www.facebook.com/lindseystirlingmusic/", ImageURL: ""},
+	{Name: "The Piano Guys", URL: "https://www.facebook.com/PianoGuys/", ImageURL: ""},
+	{Name: "Jennifer Thomas", URL: "https://www.facebook.com/jenniferthomasmusic", ImageURL: ""},
+}
+
+var explores = []struct {
+	Name string
+	URL  string
+	Icon string
+}{
+	{Name: "Pages", URL: "/pages", Icon: "fa-file-text-o"},
+	{Name: "Groups", URL: "/groups", Icon: "fa-users"},
+	{Name: "Events", URL: "/events", Icon: "fa-calendar"},
+	{Name: "Friend Lists", URL: "/friends", Icon: "fa-user-plus"},
+	{Name: "Manage Apps", URL: "/apps", Icon: "fa-wrench"},
+	{Name: "On This Day", URL: "/onthisday", Icon: "fa-clock-o"},
+	{Name: "Jobs", URL: "/jobs", Icon: "fa-briefcase"},
+	{Name: "Insights", URL: "/insights", Icon: "fa-search"},
+	{Name: "Pages Feed", URL: "/pagesfeed", Icon: "fa-newspaper-o"},
+	{Name: "Pokes", URL: "/pokes", Icon: "fa-hand-o-right"},
+	{Name: "Photos", URL: "/photos", Icon: "fa-picture-o"},
+	{Name: "Offers", URL: "/offers", Icon: "fa-handshake-o"},
+	{Name: "Ads Manager", URL: "/ads", Icon: "fa-signal"},
+	{Name: "Games", URL: "/games", Icon: "fa-gamepad"},
+	{Name: "Suggest Edits", URL: "/edits", Icon: "fa-pencil-square-o"},
+	{Name: "Live Video", URL: "/video", Icon: "fa-video-camera"},
+	{Name: "Marketplace", URL: "/marketplace", Icon: "fa-shopping-basket"},
+	{Name: "Fundraisers", URL: "/fundraisers", Icon: "fa-money"},
+	{Name: "Moments", URL: "/moments", Icon: "fa-hourglass-1"},
+	{Name: "Payment History", URL: "/payments", Icon: "fa-credit-card"},
+	{Name: "Games Feed", URL: "/games", Icon: "fa-trophy"},
+	{Name: "Create a Frame", URL: "/frame", Icon: "fa-paint-brush"},
+	{Name: "Town Hall", URL: "/townhall", Icon: "fa-university"},
+	{Name: "Order Food", URL: "/food", Icon: "fa-cutlery"},
+	{Name: "Saved", URL: "/saved", Icon: "fa-bookmark"},
+	{Name: "Buy and Sell Groups", URL: "/buyandsellgroups", Icon: "fa-tags"},
+	{Name: "Weather", URL: "/weather", Icon: "fa-sun-o"},
+}
+
+var ads = []struct {
 	ImageURL string
 	LinkURL  string
 	Title    string
 	Website  string
 	Text     string
-}{}
+}{
+	{ImageURL: "endfirst.png", LinkURL: "https://www.facebook.com/endfirstcorp/", Title: "Get EndFirst today", Website: "endfirst.com", Text: "Accelerate Business Communication with EndFirst"},
+}
 
 var events = []struct {
 	Title     string
