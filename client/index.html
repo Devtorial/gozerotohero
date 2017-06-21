@@ -20,7 +20,7 @@
     .fa {
       font-size: 15pt;
     }
-    #app {
+    .page {
       margin: 60px auto 0 auto;
       width: 988px;
     }
@@ -33,10 +33,10 @@
       float: left;
       margin-left: 180px;
     }
-    .rightnav {
+    #rightnav {
       width: 308px;
       position: fixed;
-      margin-left: 680px;
+      margin-left: 700px;
     }
     .list-group-item {
       margin-top: 10px;
@@ -45,6 +45,9 @@
       display: block;
       margin-bottom: -1px;
       border: 1px solid #ddd;
+    }
+    .miniprofile {
+      width: 24px;
     }
     .avatar {
       float: left;
@@ -79,6 +82,12 @@
       margin-top: 5px;
       font-size: 15px;
     }
+    .image, .video {
+      margin-top: 10px;
+    }
+    .image > img {
+      width: 470px;
+    }
     .comments {
       padding: 10px 15px;
       background-color: #eee;
@@ -109,13 +118,15 @@
       padding: 0;
       list-style-type: none;
     }
-    #reactPopup {
-      width: 370px;
+    .popup {
       z-index: 10000;
       border: 1px solid #ddd;
+      position: absolute;
+    }
+    #reactPopup {
+      width: 370px;
       border-radius: 20px;
       background-color: #FFF;
-      position: absolute;
       padding: 5px 10px;
     }
     #reactPopup .fa {
@@ -144,13 +155,10 @@
     }
     #cardPopup {
       width: 370px;
-      z-index: 10000;
-      border: 1px solid #ddd;
       background: url('flag.jpg');
       background-size: 370px 137px;
       background-repeat: no-repeat;
       background-color: #FFF;
-      position: absolute;
     }
     #cardPopup > img {
       width: 100px;
@@ -203,139 +211,185 @@
 </head>
 
 <body>
-  <nav class="navbar navbar-default navbar-fixed-top">
-    <div class=container>
-      <div class=navbar-header>
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class=navbar-brand href="/"><img src="https://www.delltechnologies.com/content/dam/delltechnologies/images/brands/logo-virtustream.png" alt="Devtorial logo" height="50"></a>
-      </div>
-      
-      <div class="collapse navbar-collapse" id="navbar-collapse">
-        <form class="navbar-form" role="search">
-          <div class="input-group">
-            <input type="text" class="form-control" placeholder="Search">
-            <span class="input-group-btn">
-              <button type="submit" class="btn btn-default"><i class="fa fa-search"></i> <span class="sr-only">Submit</span></button>
-            </span>
-          </div>
-        </form>
-
-        <ul class="nav navbar-nav navbar-right">
-          <li><a href="/calendar" role="button">Me</a></li>
-          <li><a href="/" role="button">Home</a></li>
-          <li><a href="/friends" role="button"><i class="fa fa-user" title="Friends"></i></a></li>
-          <li><a href="/messages" role="button"><i class="fa fa-comments-o" title="Messages"></i></a></li>
-          <li><a href="/notifications" role="button"><i class="fa fa-bell" title="Notifications"></i></a></li>
-        </ul>
-      </div>
-    </div>
-  </nav>
   <div id="app">
-    <div class="leftnav">
-      <h1>News Feed</h1>
-    </div>
-    <div class="feed">
-      <div class="data" v-show="data">
-        <ul class="list-group">
-          <li class="list-group-item" v-for="item in data">
-            <div class="post">
-              <img :src="thumbPrefix + item.ImageURLSuffix" class="avatar" />
-              <div><a :href="'/user/'+item.UserID" v-on:mouseenter="waitPopup($event.target, item, cardPopup)" v-on:mouseleave="waitClearPopup(cardPopup)">{{ item.Name }}</a></div>
-              <div class="date"><a :href="'/post/'+item.PostID" :title="item.PostDate | formatDate">{{ item.PostDate | relativeDate }}</a></div>
-              <div class="message">{{ item.Post }}</div>
-              <div class="react">
-                <span><a href="like" v-on:mouseenter="waitPopup($event.target, item, reactPopup)" v-on:mouseleave="waitClearPopup(reactPopup)" title="Like"><i class="fa fa-thumbs-o-up"></i> Like</a></span>
-                <span><i class="fa fa-comment-o" title="Comment"></i> Comment</span>
-              </div>
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class=container>
+        <div class=navbar-header>
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class=navbar-brand href="/"><img src="https://www.delltechnologies.com/content/dam/delltechnologies/images/brands/logo-virtustream.png" alt="Devtorial logo" height="50"></a>
+        </div>
+        
+        <div class="collapse navbar-collapse" id="navbar-collapse">
+          <form class="navbar-form" role="search">
+            <div class="input-group">
+              <input type="text" class="form-control" placeholder="Search">
+              <span class="input-group-btn">
+                <button type="submit" class="btn btn-default"><i class="fa fa-search"></i> <span class="sr-only">Submit</span></button>
+              </span>
             </div>
-            <div class="comments" v-if="item.Comments.length > 0">
-              <div class="summary">
-                <a :href="item.Comments[0].Name" v-on:mouseenter="waitPopup($event.target, item.Comments[0], cardPopup)" v-on:mouseleave="waitClearPopup(cardPopup)">{{ item.Comments[0].Name }}</a> and <a href="details">{{ item.Comments.length }} others</details>
-              </div>
-              <ul>
-                <li v-for="comment in item.Comments">
-                  <div class="comment">
-                    <img :src="thumbPrefix + comment.ImageURLSuffix" class="avatar" />
-                    <div>
-                      <a :href="'/user/'+comment.UserID" v-on:mouseenter="waitPopup($event.target, comment, cardPopup)" v-on:mouseleave="waitClearPopup(cardPopup)">{{ comment.Name }}</a> {{ comment.Post }}
-                      <div>
-                        <span><a href="like" v-on:mouseenter="waitPopup($event.target, comment, reactPopup)" v-on:mouseleave="waitClearPopup(reactPopup)">Like</a></span>
-                        <span role="presentation" aria-hidden="true"> · </span>
-                        <span><a href="reply">Reply</a></span>
-                        <span role="presentation" aria-hidden="true"> - </span>
-                        <span class="date"><a :href="'/post/'+item.PostID" :title="comment.PostDate | formatDate">{{ comment.PostDate | relativeDate }}</a></span>
-                      </div>
-                    </div>
-                    <div class="reply">
-                      <ul>
-                        <li v-for="reply in comment.Comments">
-                          <div class="reply">
-                            <img :src="thumbPrefix + reply.ImageURLSuffix" class="avatar" />
-                            <div>
-                              <a :href="'/user/'+reply.UserID" v-on:mouseenter="waitPopup($event.target, reply, cardPopup)" v-on:mouseleave="waitClearPopup(cardPopup)">{{ reply.Name }}</a> {{ reply.Post }}
-                              <div>
-                                <span><a href="like" v-on:mouseenter="waitPopup($event.target, reply, reactPopup)" v-on:mouseleave="waitClearPopup(reactPopup)">Like</a></span>
-                                <span role="presentation" aria-hidden="true"> · </span>
-                                <span><a href="reply">Reply</a></span>
-                                <span role="presentation" aria-hidden="true"> - </span>
-                                <span class="date"><a :href="'/post/'+item.PostID" :title="reply.PostDate | formatDate">{{ reply.PostDate | relativeDate }}</a></span>
-                              </div>
-                            </div>
-                          </div>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </li>
-      </div>
-    </div>
-    <div class="rightnav">
-      <h1>Your Pages</h1>
-      <h1>Event Invites</h1>
-    </div>
-    <div id="reactPopup" v-show="reactPopup.visible" v-on:mouseenter="reactPopup.hoveringOver = $el" v-on:mouseleave="waitClearPopup(reactPopup)">
-      <span class="circle blue"><i class="fa fa-thumbs-up"></i></span>
-      <span class="circle red"><i class="fa fa-heart"></i></span>
-      <span class="circle yellow"><i class="fa fa-smile-o"></i></span>
-      <span class="circle yellow"><i class="fa fa-smile-o"></i></span>
-      <span class="circle yellow"><i class="fa fa-frown-o"></i></span>
-      <span class="circle yellow"><i class="fa fa-frown-o"></i></span>
-    </div>
-    <div id="cardPopup" v-show="cardPopup.visible" v-on:mouseenter="cardPopup.hoveringOver = $el" v-on:mouseleave="waitClearPopup(cardPopup)">
-      <img :src="this.largePrefix + selected.ImageURLSuffix"/>
-      <div class="gradient"></div>
-      <div class="user">
-        <div class="name">{{selected.Name}}</div>
-        <div class="statuses">
-          <div class="status">
-            <i class="fa fa-map-marker"></i>
-            <div class="action">
-              Visited <a href="https://www.google.com/maps/place/Burbank,+CA">Burbank, California</a>
-              <div class="time">on Monday</div>
-            </div>
-          </div>
-          <div class="status">
-            <i class="fa fa-user"></i>
-            <div class="action">80 mutual friends including <a :href="'/user/'+selected.UserID">Person 1</a></div>
-          </div>
+          </form>
+
+          <ul class="nav navbar-nav navbar-right">
+            <li v-if="me"><a href="/calendar" role="button" title="Profile"><img class="miniprofile" :src="me.Picture.Thumbnail"/> {{me.Name.First}}</a></li>
+            <li><a href="/" role="button">Home</a></li>
+            <li><a href="/friends" role="button"><i class="fa fa-user" title="Friends"></i></a></li>
+            <li><a href="/messages" role="button"><i class="fa fa-comments-o" title="Messages"></i></a></li>
+            <li><a href="/notifications" role="button"><i class="fa fa-bell" title="Notifications"></i></a></li>
+          </ul>
         </div>
       </div>
-      <div class="footer">
-        <button><i class="fa fa-check"></i> Friends <i class="fa fa-sort-down"></i></button>
-        <button><i class="fa fa-check"></i> Following <i class="fa fa-sort-down"></i></button>
-        <button><i class="fa fa-comments-o"></i> Message</button>
+    </nav>
+    <div class="page">
+      <div class="leftnav">
+        <h1>News Feed</h1>
+      </div>
+      <div class="feed">
+        <div class="data" v-show="data">
+          <ul class="list-group">
+            <li class="list-group-item" v-for="item in data">
+              <div class="post">
+                <img :src="thumbPrefix + item.ProfileImage" class="avatar" />
+                <div><a :href="'/user/'+item.UserID" v-on:mouseenter="waitPopup($event.target, item, cardPopup)" v-on:mouseleave="waitClearPopup(cardPopup)">{{ item.Name }}</a></div>
+                <div class="date"><a :href="'/post/'+item.PostID" :title="item.PostDate | formatDate">{{ item.PostDate | relativeDate }}</a></div>
+                <div class="message" v-if="item.Post.length > 480 && !item.seeMore">{{ item.Post | truncate }} <a v-on:click="seeMore(item)">See More</a></div>
+                <div class="message" v-else>{{ item.Post }}</div>
+                <div class="image" v-if="item.SharedImage"><img :src="item.SharedImage"/></div>
+                <div class="video" v-if="item.SharedVideo"><iframe width="470" height="315" :src="item.SharedVideo"></iframe></div>
+                <div class="react">
+                  <span><a href="like" v-on:mouseenter="waitPopup($event.target, item, reactPopup)" v-on:mouseleave="waitClearPopup(reactPopup)" title="Like"><i class="fa fa-thumbs-o-up"></i> Like</a></span>
+                  <span><i class="fa fa-comment-o" title="Comment"></i> Comment</span>
+                </div>
+              </div>
+              <div class="comments" v-if="item.Comments.length > 0">
+                <div class="summary">
+                  <a :href="item.Comments[0].Name" v-on:mouseenter="waitPopup($event.target, item.Comments[0], cardPopup)" v-on:mouseleave="waitClearPopup(cardPopup)">{{ item.Comments[0].Name }}</a> and <a href="details">{{ item.Comments.length }} others</details>
+                </div>
+                <ul>
+                  <li v-for="comment in item.Comments">
+                    <div class="comment">
+                      <img :src="thumbPrefix + comment.ProfileImage" class="avatar" />
+                      <div>
+                        <a :href="'/user/'+comment.UserID" v-on:mouseenter="waitPopup($event.target, comment, cardPopup)" v-on:mouseleave="waitClearPopup(cardPopup)">{{ comment.Name }}</a> {{ comment.Post }}
+                        <div>
+                          <span><a href="like" v-on:mouseenter="waitPopup($event.target, comment, reactPopup)" v-on:mouseleave="waitClearPopup(reactPopup)">Like</a></span>
+                          <span role="presentation" aria-hidden="true"> · </span>
+                          <span><a href="reply">Reply</a></span>
+                          <span role="presentation" aria-hidden="true"> - </span>
+                          <span class="date"><a :href="'/post/'+item.PostID" :title="comment.PostDate | formatDate">{{ comment.PostDate | relativeDate }}</a></span>
+                        </div>
+                      </div>
+                      <div class="reply">
+                        <ul>
+                          <li v-for="reply in comment.Comments">
+                            <div class="reply">
+                              <img :src="thumbPrefix + reply.ProfileImage" class="avatar" />
+                              <div>
+                                <a :href="'/user/'+reply.UserID" v-on:mouseenter="waitPopup($event.target, reply, cardPopup)" v-on:mouseleave="waitClearPopup(cardPopup)">{{ reply.Name }}</a> {{ reply.Post }}
+                                <div>
+                                  <span><a href="like" v-on:mouseenter="waitPopup($event.target, reply, reactPopup)" v-on:mouseleave="waitClearPopup(reactPopup)">Like</a></span>
+                                  <span role="presentation" aria-hidden="true"> · </span>
+                                  <span><a href="reply">Reply</a></span>
+                                  <span role="presentation" aria-hidden="true"> - </span>
+                                  <span class="date"><a :href="'/post/'+item.PostID" :title="reply.PostDate | formatDate">{{ reply.PostDate | relativeDate }}</a></span>
+                                </div>
+                              </div>
+                            </div>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </li>
+        </div>
+      </div>
+      <div id="rightnav">
+        <div class="list-group-item">
+          <div class="title">Your Pages</div>
+          <div v-if="pages[selectedPageIndex]">
+            <a :href="'/pages/' + selectedPageIndex" v-on:mouseenter="waitPopup($event.target, pages[selectedPageIndex], pagePopup)" v-on:mouseleave="waitClearPopup(pagePopup)">{{ pages[selectedPageIndex].Name }}</a>
+          </div>
+          <div v-else>Loading</div>
+        </div>
+        <div class="list-group-item">
+          <a :href="'/events/'" v-on:mouseenter="waitPopup($event.target, events, eventPopup)" v-on:mouseleave="waitClearPopup(eventPopup)">{{events.length + ' event invites'}}</a>
+        </div>
+        <div class="list-group-item">
+          <h1>Trending <i class="fa fa-line-chart"></i> <i class="fa fa-institution"></i> <i class="fa fa-flask"></i> <i class="fa fa-futbol-o"></i> <i class="fa fa-film"></i></h1>
+          <ul>
+            <li v-for="item in filterTrending()">
+              <a :href="item.Url" v-on:mouseenter="waitPopup($event.target, item, trendingPopup)" v-on:mouseleave="waitClearPopup(trendingPopup)"><div class="title">{{item.Title | truncate(15) }}</title>
+              <div class="description">{{item.Description | truncate(55) }} {{item.Url | urlDomain }}</div></a>
+            </li>
+          </ul>
+        </div>
+        <div class="list-group-item">
+          <h1>Ads</h1>
+          <ul>
+            <li v-for="item in ads">
+              <a :href="item.LinkURL"><img :src="item.ImageURL"/></a>
+              <a :href="item.LinkURL">{{item.Title}}</a>
+              <a :href="item.LinkURL">{{item.Website}}</a>
+              {{item.Text}}
+            </li>
+          </ul>
+        </div>
+        <div class="list-group-item">
+          English (US) · Espanol · Portugues (Brasil) · Francais (France) · Deutsch
+        </div>
+        Privacy · Terms · Advertising · Ad Choices · Cookies · More · 
+        Clonebook © 2017
+      </div>
+      <div id="reactPopup" class="popup" v-show="reactPopup.visible" v-on:mouseenter="reactPopup.hoveringOver = $el" v-on:mouseleave="waitClearPopup(reactPopup)">
+        <span class="circle blue"><i class="fa fa-thumbs-up"></i></span>
+        <span class="circle red"><i class="fa fa-heart"></i></span>
+        <span class="circle yellow"><i class="fa fa-smile-o"></i></span>
+        <span class="circle yellow"><i class="fa fa-smile-o"></i></span>
+        <span class="circle yellow"><i class="fa fa-frown-o"></i></span>
+        <span class="circle yellow"><i class="fa fa-frown-o"></i></span>
+      </div>
+      <div id="cardPopup" class="popup" v-show="cardPopup.visible" v-on:mouseenter="cardPopup.hoveringOver = $el" v-on:mouseleave="waitClearPopup(cardPopup)">
+        <img :src="this.largePrefix + selected.ProfileImage" v-if="selected.ProfileImage"/>
+        <div class="gradient"></div>
+        <div class="user">
+          <div class="name">{{selected.Name}}</div>
+          <div class="statuses">
+            <div class="status">
+              <i class="fa fa-map-marker"></i>
+              <div class="action">
+                Visited <a href="https://www.google.com/maps/place/Burbank,+CA">Burbank, California</a>
+                <div class="time">on Monday</div>
+              </div>
+            </div>
+            <div class="status">
+              <i class="fa fa-user"></i>
+              <div class="action">80 mutual friends including <a :href="'/user/'+selected.UserID">Person 1</a></div>
+            </div>
+          </div>
+        </div>
+        <div class="footer">
+          <button><i class="fa fa-check"></i> Friends <i class="fa fa-sort-down"></i></button>
+          <button><i class="fa fa-check"></i> Following <i class="fa fa-sort-down"></i></button>
+          <button><i class="fa fa-comments-o"></i> Message</button>
+        </div>
+      </div>
+      <div id="pagePopup" class="popup" v-show="pagePopup.visible" v-on:mouseenter="pagePopup.hoveringOver = $el" v-on:mouseleave="waitClearPopup(pagePopup)">
+        <h1>Page popup</h1>
+      </div>
+      <div id="eventPopup" class="popup" v-show="eventPopup.visible" v-on:mouseenter="eventPopup.hoveringOver = $el" v-on:mouseleave="waitClearPopup(eventPopup)">
+        <h1>Event popup</h1>
+      </div>
+      <div id="trendingPopup" class="popup" v-show="trendingPopup.visible" v-on:mouseenter="trendingPopup.hoveringOver = $el" v-on:mouseleave="waitClearPopup(trendingPopup)">
+        <h1>Trending popup</h1>
       </div>
     </div>
   </div>
-    
   <script src="index.js"></script>
 </body>
 </html>
