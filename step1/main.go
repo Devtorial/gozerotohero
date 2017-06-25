@@ -57,7 +57,7 @@ type article struct {
 	Title       string
 	Description string
 	Url         string
-	PublishedAt time.Time
+	PublishedAt string
 }
 
 type httpGetter interface {
@@ -86,7 +86,7 @@ func getAPIData() ([]person, *trending) {
 	users, _ := getRandomUserData()
 	trending := trending{}
 	trending.News, _ = getNews("the-new-york-times", "top")
-	trending.Politics, _ = getNews("the-new-york-times", "top")
+	trending.Politics, _ = getNews("cnn", "top")
 	trending.Tech, _ = getNews("techcrunch", "top")
 	trending.Sports, _ = getNews("espn", "top")
 	trending.Entertainment, _ = getNews("entertainment-weekly", "top")
@@ -150,10 +150,13 @@ func getPages(people []person) func(http.ResponseWriter, *http.Request, httprout
 			PostEngagements int
 			PostComments    int
 			PostShares      int
-			Ad              string
+			AdTitle         string
+			AdText          string
+			AdImageURL      string
+			AdButtonText    string
 			RecentPosts     []feedData
 		}{
-			{Name: "EndFirst", ProfileImage: "endfirst.png", Likes: 93, LikesThisWeek: 0, Views: 14, PostEngagements: 16, PostComments: 0, PostShares: 0, Ad: `Your post "As you may know, our Kickstart..." is getting more engagement than 95% of your recent posts. Boost it to reach up to 6,800 more people in Oregon.`, RecentPosts: posts},
+			{Name: "EndFirst", ProfileImage: "endfirst.png", Likes: 93, LikesThisWeek: 0, Views: 14, PostEngagements: 16, PostComments: 0, PostShares: 0, AdTitle: "Promote Your Post", AdText: `Your post "As you may know, our Kickstart..." is getting more engagement than 95% of your recent posts. Boost it to reach up to 6,800 more people in Oregon.`, RecentPosts: posts},
 		}
 
 		jsonText, err := json.Marshal(pages)
@@ -207,7 +210,7 @@ func getExplores(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 }
 
 func createMultiplePosts(people []person, timeAfter time.Time, numPosts int) []feedData {
-	feed := make([]feedData, 10)
+	feed := make([]feedData, numPosts)
 	for i := 0; i < numPosts; i++ {
 		feed[i] = *createPostAndComments(people, timeAfter)
 	}
@@ -267,12 +270,12 @@ var shortcuts = []struct {
 	URL      string
 	ImageURL string
 }{
-	{Name: "Ensign Symphony & Chorus", URL: "https://www.facebook.com/seattleensign/", ImageURL: ""},
-	{Name: "EndFirst", URL: "https://www.facebook.com/endfirstcorp/", ImageURL: ""},
-	{Name: "Devtorial", URL: "https://www.facebook.com/Devtorial-1931897723758457/", ImageURL: ""},
-	{Name: "Lindsey Stirling", URL: "https://www.facebook.com/lindseystirlingmusic/", ImageURL: ""},
-	{Name: "The Piano Guys", URL: "https://www.facebook.com/PianoGuys/", ImageURL: ""},
-	{Name: "Jennifer Thomas", URL: "https://www.facebook.com/jenniferthomasmusic", ImageURL: ""},
+	{Name: "Ensign Symphony & Chorus", ImageURL: ""},
+	{Name: "EndFirst", ImageURL: ""},
+	{Name: "Devtorial", ImageURL: ""},
+	{Name: "Lindsey Stirling", ImageURL: ""},
+	{Name: "The Piano Guys", ImageURL: ""},
+	{Name: "Jennifer Thomas", ImageURL: ""},
 }
 
 var explores = []struct {
@@ -280,33 +283,33 @@ var explores = []struct {
 	URL  string
 	Icon string
 }{
-	{Name: "Pages", URL: "/pages", Icon: "fa-file-text-o"},
-	{Name: "Groups", URL: "/groups", Icon: "fa-users"},
-	{Name: "Events", URL: "/events", Icon: "fa-calendar"},
-	{Name: "Friend Lists", URL: "/friends", Icon: "fa-user-plus"},
-	{Name: "Manage Apps", URL: "/apps", Icon: "fa-wrench"},
-	{Name: "On This Day", URL: "/onthisday", Icon: "fa-clock-o"},
-	{Name: "Jobs", URL: "/jobs", Icon: "fa-briefcase"},
-	{Name: "Insights", URL: "/insights", Icon: "fa-search"},
-	{Name: "Pages Feed", URL: "/pagesfeed", Icon: "fa-newspaper-o"},
-	{Name: "Pokes", URL: "/pokes", Icon: "fa-hand-o-right"},
-	{Name: "Photos", URL: "/photos", Icon: "fa-picture-o"},
-	{Name: "Offers", URL: "/offers", Icon: "fa-handshake-o"},
-	{Name: "Ads Manager", URL: "/ads", Icon: "fa-signal"},
-	{Name: "Games", URL: "/games", Icon: "fa-gamepad"},
-	{Name: "Suggest Edits", URL: "/edits", Icon: "fa-pencil-square-o"},
-	{Name: "Live Video", URL: "/video", Icon: "fa-video-camera"},
-	{Name: "Marketplace", URL: "/marketplace", Icon: "fa-shopping-basket"},
-	{Name: "Fundraisers", URL: "/fundraisers", Icon: "fa-money"},
-	{Name: "Moments", URL: "/moments", Icon: "fa-hourglass-1"},
-	{Name: "Payment History", URL: "/payments", Icon: "fa-credit-card"},
-	{Name: "Games Feed", URL: "/games", Icon: "fa-trophy"},
-	{Name: "Create a Frame", URL: "/frame", Icon: "fa-paint-brush"},
-	{Name: "Town Hall", URL: "/townhall", Icon: "fa-university"},
-	{Name: "Order Food", URL: "/food", Icon: "fa-cutlery"},
-	{Name: "Saved", URL: "/saved", Icon: "fa-bookmark"},
-	{Name: "Buy and Sell Groups", URL: "/buyandsellgroups", Icon: "fa-tags"},
-	{Name: "Weather", URL: "/weather", Icon: "fa-sun-o"},
+	{Name: "Pages", Icon: "fa-file-text-o"},
+	{Name: "Groups", Icon: "fa-users"},
+	{Name: "Events", Icon: "fa-calendar"},
+	{Name: "Friend Lists", Icon: "fa-user-plus"},
+	{Name: "Manage Apps", Icon: "fa-wrench"},
+	{Name: "On This Day", Icon: "fa-clock-o"},
+	{Name: "Jobs", Icon: "fa-briefcase"},
+	{Name: "Insights", Icon: "fa-search"},
+	{Name: "Pages Feed", Icon: "fa-newspaper-o"},
+	{Name: "Pokes", Icon: "fa-hand-o-right"},
+	{Name: "Photos", Icon: "fa-picture-o"},
+	{Name: "Offers", Icon: "fa-handshake-o"},
+	{Name: "Ads Manager", Icon: "fa-signal"},
+	{Name: "Games", Icon: "fa-gamepad"},
+	{Name: "Suggest Edits", Icon: "fa-pencil-square-o"},
+	{Name: "Live Video", Icon: "fa-video-camera"},
+	{Name: "Marketplace", Icon: "fa-shopping-basket"},
+	{Name: "Fundraisers", Icon: "fa-money"},
+	{Name: "Moments", Icon: "fa-hourglass-1"},
+	{Name: "Payment History", Icon: "fa-credit-card"},
+	{Name: "Games Feed", Icon: "fa-trophy"},
+	{Name: "Create a Frame", Icon: "fa-paint-brush"},
+	{Name: "Town Hall", Icon: "fa-university"},
+	{Name: "Order Food", Icon: "fa-cutlery"},
+	{Name: "Saved", Icon: "fa-bookmark"},
+	{Name: "Buy and Sell Groups", Icon: "fa-tags"},
+	{Name: "Weather", Icon: "fa-sun-o"},
 }
 
 var ads = []struct {

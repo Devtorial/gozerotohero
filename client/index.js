@@ -22,11 +22,13 @@ new Vue({
     pages: [],
     selectedPageIndex: 0,
     trending: {},
+    trendingFiltered: [],
     trendingCategory: 'News',
     events: [],
     ads: [],
     shortcuts: [],
     explores: [],
+    exploresFiltered: [],
     me: undefined,
     hoveringOver: undefined,
     selected: {},
@@ -41,14 +43,22 @@ new Vue({
   },
   methods: {
     handleScroll() {
+      this.scrollPane(document.getElementById('leftnav'));
+      this.scrollPane(document.getElementById('rightnav'));
+      this.infiniteScroll();
+    },
+    scrollPane(pane) {
+      let headerHeight = 60;
+      let rect = pane.getBoundingClientRect();
+
+      if (rect.bottom > window.innerHeight || -window.pageYOffset + headerHeight > rect.top) {
+        pane.style.top = (-window.pageYOffset + headerHeight) + 'px';
+      } 
+    },
+    infiniteScroll() {
       let body = document.body;
       let html = document.documentElement;
       let docHeight = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight); // how jquery calculates document height
-
-      if (window.pageYOffset < 300) {
-        rightnav.style.top = -window.pageYOffset + 60;
-      }
-
       if (window.pageYOffset + window.innerHeight >= docHeight - 200) { // fetch data when < 200 px from bottom
         this.getFeed()
       }
@@ -78,16 +88,17 @@ new Vue({
         console.log("error", response);
       });
     },
-    getTrending() {
+    getEvents() {
       axios.get('/api/events').then((response) => {
         this.events = response.data;
       }).catch((response) => {
         console.log("error", response);
       });
     },
-    getEvents() {
+    getTrending() {
       axios.get('/api/trending').then((response) => {
         this.trending = response.data;
+        this.trendingFiltered = this.trending[this.trendingCategory].slice(0, 3);
       }).catch((response) => {
         console.log("error", response);
       });
@@ -102,6 +113,7 @@ new Vue({
     getExplores() {
       axios.get('/api/explores').then((response) => {
         this.explores = response.data;
+        this.exploresFiltered = this.explores.slice(0, 10);
       }).catch((response) => {
         console.log("error", response);
       });
@@ -113,11 +125,16 @@ new Vue({
         console.log("error", response);
       });
     },
-    seeMore(post) {
-      this.$set(post, 'seeMore', true);
+    setTrendingCategory(category) {
+      this.trendingCategory = category;
+      this.trendingFiltered = this.trending[category];
     },
-    filterTrending() {
-      return this.trending[this.trendingCategory] ? this.trending[this.trendingCategory].slice(0, 3) : [];
+    getCurrentWeekRange() {
+      var curr = new Date();
+      var first = curr.getDate() - curr.getDay(); // subtract day of week to get to Sunday
+      var last = first + 6;
+      console.log(first, last);
+      return "from date - to date";
     },
     waitPopup(el, data, config) {
       config.hoveringOver = el;

@@ -10,6 +10,9 @@
     .navbar-brand {
       margin-top: -13px;
     }
+    a {
+      cursor: pointer;
+    }
     h1 {
       font-size: 14pt;
       margin-top: 10px;
@@ -17,22 +20,44 @@
     form {
       display: inline-block;
     }
-    .fa {
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    .nav .fa {
       font-size: 15pt;
+    }
+    .fa {
+      font-size: 12pt;
     }
     .page {
       margin: 60px auto 0 auto;
       width: 988px;
     }
-    .leftnav {
+    #leftnav {
       width: 180px;
       position: fixed;
       padding-top: 10px;
     }
+    #leftnav li {
+      color: #666;
+      cursor: pointer;
+      padding: 4px 6px;
+    }
+    #leftnav li:hover {
+      background-color: #ddd;
+    }
+    #leftnav .icon {
+      width: 22px;
+      display: inline-block;
+    }
+    .header {
+      text-transform: uppercase;
+    }
     .feed {
       width: 500px;
       float: left;
-      margin-left: 180px;
+      margin-left: 190px;
     }
     #rightnav {
       width: 308px;
@@ -69,9 +94,6 @@
       border-top: 1px solid #ddd;
       margin-top: 10px;
     }
-    .react .fa {
-      font-size: 12pt;
-    }
     .react > span {
       display: inline-block;
       margin-top: 10px;
@@ -100,9 +122,7 @@
       margin-bottom: 10px;
     }
     .comments > ul  {
-      list-style-type: none;
       margin: 0;
-      padding: 0;
     }
     .comment {
       margin-top: 5px;
@@ -116,8 +136,6 @@
     }
     .reply > ul {
       margin: 10px 0 0 0;
-      padding: 0;
-      list-style-type: none;
     }
     .popup {
       z-index: 10000;
@@ -208,6 +226,48 @@
       margin-left: 20px;
       width: 210px;
     }
+    .description {
+      color: #222;
+    }
+    .grey {
+      color: #888;
+    }
+    .trending li:hover .title {
+      text-decoration: underline;
+    }
+    .trending i {
+      margin-left: 10px;
+      color: #337ab7;
+      float: left;
+    }
+    .trending article {
+      margin-left: 30px;
+    }
+    .trending a:hover {
+      text-decoration: none;
+    }
+    .trending .title {
+      font-weight: bold;
+    }
+    .trendingTypes {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+    }
+    .trendingTypes i {
+      color: darkgray;
+      padding: 5px;
+    }
+    .trendingTypes i:hover {
+      color: #337ab7;
+    }
+    .trendingTypes i.selected {
+      border-bottom: 1px solid #337ab7;
+      color: #337ab7;
+    }
+    .page .tabContent {
+      border-bottom: 2px solid darkgray;
+    }
   </style>
 </head>
 
@@ -246,22 +306,26 @@
       </div>
     </nav>
     <div class="page">
-      <div class="leftnav">
-        <div v-if="me"><a href="/user/userID" role="button" :title="me.Name.First + ' ' + me.Name.Last"><img class="miniprofile" :src="me.Picture.Thumbnail"/> {{me.Name.First + ' ' + me.Name.Last}}</a></div>
-        <div>News Feed</div>
-        <div>Messenger</div>
-        <div>Shortcuts</div>
-        <div>
-          <ul>
-            <li v-for="item in shortcuts"><a :href="item.URL">{{item.Name || truncate(17)}}</a></li>
-          </ul>
-        </div>
-        <div>Explore</div>
-        <div>
-          <ul>
-            <li v-for="item in explores"><i :class="'fa '+item.Icon"></i> <a :href="item.URL">{{item.Name || truncate(17)}}</a></li>
-          </ul>
-        </div>
+      <div id="leftnav">
+        <ul v-if="me">
+          <li><span class="icon"><img class="miniprofile" :src="me.Picture.Thumbnail"/></span> 
+              {{me.Name.First + ' ' + me.Name.Last}}</li>
+        </ul>
+        <ul>
+          <li><span class="icon"><i class="fa fa-newspaper-o"></i></span> News Feed</li>
+          <li><span class="icon"><i class="fa fa-comments-o"></i></span> Messenger</li>
+        </ul>
+        <div class="header">Shortcuts</div>
+        <ul>
+          <li v-for="item in shortcuts"><span class="icon"></span>{{item.Name | truncate(15)}}</li>
+        </ul>
+        <div class="header">Explore</div>
+        <ul>
+          <li v-for="item in exploresFiltered || explores"><span class="icon"><i :class="'fa '+item.Icon"></i></span> {{item.Name | truncate(15)}}</li>
+          <a v-on:click="exploresFiltered = undefined"><li v-if="exploresFiltered"><i class="fa fa-caret-down"></i> See More...</li></a>
+        </ul>
+        <div class="header">Create</div>
+        <div class="footer"><a>Ad</a> · <a>Page</a> · <a>Group</a> · <a>Event</a> · <a>Fundraiser</a></a></div>
       </div>
       <div class="feed">
         <div class="data" v-show="data">
@@ -271,7 +335,7 @@
                 <img :src="thumbPrefix + item.ProfileImage" class="avatar" />
                 <div><a :href="'/user/'+item.UserID" v-on:mouseenter="waitPopup($event.target, item, cardPopup)" v-on:mouseleave="waitClearPopup(cardPopup)">{{ item.Name }}</a></div>
                 <div class="date"><a :href="'/post/'+item.PostID" :title="item.PostDate | formatDate">{{ item.PostDate | relativeDate }}</a></div>
-                <div class="message" v-if="item.Post.length > 480 && !item.seeMore">{{ item.Post | truncate }} <a v-on:click="seeMore(item)">See More</a></div>
+                <div class="message" v-if="item.Post.length > 480 && !item.seeMore">{{ item.Post | truncate }} <a v-on:click="$set(item, 'seeMore', true);">See More</a></div>
                 <div class="message" v-else>{{ item.Post }}</div>
                 <div class="image" v-if="item.SharedImage"><img :src="item.SharedImage"/></div>
                 <div class="video" v-if="item.SharedVideo"><iframe width="470" height="315" :src="item.SharedVideo"></iframe></div>
@@ -325,49 +389,98 @@
         </div>
       </div>
       <div id="rightnav">
-        <div class="list-group-item">
+        <div id="pages" class="list-group-item">
           <div class="title">Your Pages</div>
           <div v-if="pages[selectedPageIndex]">
             <a :href="'/pages/' + selectedPageIndex" v-on:mouseenter="waitPopup($event.target, pages[selectedPageIndex], pagePopup)" v-on:mouseleave="waitClearPopup(pagePopup)">{{ pages[selectedPageIndex].Name }}</a>
             <span title="Messages"><a href="/messages" role="button"><i class="fa fa-comments-o"></i> Messages</a></span>
             <span title="Notifications"><a href="/notifications" role="button"><i class="fa fa-bell"></i> Notifications</a></span>
-            <div>
+            <div class="actions">
               <span title="Publish"><i class="fa fa-edit"></i> Publish</span>
               <span title="Photo"><i class="fa fa-camera"></i> Photo</span>
               <span title="Event"><i class="fa fa-calendar-o"></i> Event</span>
               <span title="Promote"><i class="fa fa-bullhorn"></i> Promote</span>
             </div>
+            <div class="tabNav">
+              <span>Likes</span>
+              <span>Views</span>
+              <span>Posts</span>
+            </div>
+            <div class="tabContent">
+              <div name="likes">
+                <div class="big">{{ pages[selectedPageIndex].Likes }}</div>
+                <div>{{ pages[selectedPageIndex].LikesThisWeek }}</div>
+              </div>
+              <div name="views">
+                <div>{{ getCurrentWeekRange() }}</div>
+                <div class="big">
+                  <span>{{ pages[selectedPageIndex].Views }}</span>
+                  <span>{{ pages[selectedPageIndex].PostEngagements }}</span>
+                </div>
+              </div>
+              <div name="posts">
+                <div>{{ getCurrentWeekRange() }}</div>
+                <div class="big">
+                  <span>{{ pages[selectedPageIndex].PostComments }}</span>
+                  <span>{{ pages[selectedPageIndex].PostShares }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="ad">
+              <div class="title">{{ pages[selectedPageIndex].AdTitle }}</div>
+              <img :src="pages[selectedPageIndex].ImageURL" /> 
+              <div class="description">{{ pages[selectedPageIndex].AdText }}</div>
+              <button>{{ pages[selectedPageIndex].AdButtonText }}</button>
+            </div>
+            <div class="recentPosts">
+              <ul>
+                <li v-for="item in pages[selectedPageIndex].RecentPosts">
+                  <img src="endfirst.png"/>
+                  <div class="title">EndFirst</div>
+                  <div class="date">{{ item.PostDate | relativeDate }}</div>
+                  <div class="content">{{ item.Post | truncate(40) }}</div>
+                </li>
+              </ul>
           </div>
           <div v-else>Loading</div>
         </div>
         <div class="list-group-item">
           <a :href="'/events/'" v-on:mouseenter="waitPopup($event.target, events, eventPopup)" v-on:mouseleave="waitClearPopup(eventPopup)">{{events.length + ' event invites'}}</a>
         </div>
-        <div class="list-group-item">
-          <h1>Trending <i class="fa fa-line-chart"></i> <i class="fa fa-institution"></i> <i class="fa fa-flask"></i> <i class="fa fa-futbol-o"></i> <i class="fa fa-film"></i></h1>
+        <div class="list-group-item trending">
+          <h1>Trending</h1>
+          <span class="trendingTypes">
+            <i class="fa fa-line-chart" :class="{ selected:trendingCategory=='News' }" title="News" v-on:click="setTrendingCategory('News')"></i>
+            <i class="fa fa-institution" :class="{ selected:trendingCategory=='Politics' }" title="Politics" v-on:click="setTrendingCategory('Politics')"></i>
+            <i class="fa fa-flask" :class="{ selected:trendingCategory=='Tech' }" title="Science and Technology" v-on:click="setTrendingCategory('Tech')"></i>
+            <i class="fa fa-futbol-o" :class="{ selected:trendingCategory=='Sports' }" title="Sports" v-on:click="setTrendingCategory('Sports')"></i>
+            <i class="fa fa-film" :class="{ selected:trendingCategory=='Entertainment' }" title="Entertainment" v-on:click="setTrendingCategory('Entertainment')"></i>
+          </span>
           <ul>
-            <li v-for="item in filterTrending()">
-              <a :href="item.Url" v-on:mouseenter="waitPopup($event.target, item, trendingPopup)" v-on:mouseleave="waitClearPopup(trendingPopup)"><div class="title">{{item.Title | truncate(15) }}</title>
-              <div class="description">{{item.Description | truncate(55) }} {{item.Url | urlDomain }}</div></a>
+            <li v-for="item in trendingFiltered" v-on:mouseenter="waitPopup($event.target, item, trendingPopup)" v-on:mouseleave="waitClearPopup(trendingPopup)">
+              <i class="fa fa-bolt"></i>
+              <a :href="item.Url"><article><div class="title">{{item.Title | truncate(25) }}</div>
+              <div class="description">{{item.Description | truncate(55) }} <span class="grey">- {{item.Url | urlDomain }}</span></div></article></a>
             </li>
+            <li v-if="trendingFiltered.length == 3"><a v-on:click="trendingFiltered = trending[trendingCategory];"><i class="fa fa-caret-down"></i> See More...</a></li>
           </ul>
         </div>
         <div class="list-group-item">
           <h1>Ads</h1>
           <ul>
             <li v-for="item in ads">
-              <a :href="item.LinkURL"><img :src="item.ImageURL"/></a>
-              <a :href="item.LinkURL">{{item.Title}}</a>
-              <a :href="item.LinkURL">{{item.Website}}</a>
-              {{item.Text}}
+              <a :href="item.LinkURL"><img :src="item.ImageURL"/>
+              <div>{{item.Title}}</div>
+              <div>{{item.Website}}</div>
+              <div>{{item.Text}}</div></a>
             </li>
           </ul>
         </div>
         <div class="list-group-item">
-          English (US) · Espanol · Portugues (Brasil) · Francais (France) · Deutsch
+          English (US) · <a>Espanol</a> · <a>Portugues (Brasil)</a> · <a>Francais (France)</a> · <a>Deutsch</a>
         </div>
-        Privacy · Terms · Advertising · Ad Choices · Cookies · More · 
-        Clonebook © 2017
+        <div>Privacy · Terms · Advertising · Ad Choices · Cookies · More · 
+        Clonebook © 2017</div>
       </div>
       <div id="reactPopup" class="popup" v-show="reactPopup.visible" v-on:mouseenter="reactPopup.hoveringOver = $el" v-on:mouseleave="waitClearPopup(reactPopup)">
         <span class="circle blue"><i class="fa fa-thumbs-up"></i></span>
