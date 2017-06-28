@@ -130,11 +130,9 @@ new Vue({
       this.trendingFiltered = this.trending[category];
     },
     getCurrentWeekRange() {
-      var curr = new Date();
-      var first = curr.getDate() - curr.getDay(); // subtract day of week to get to Sunday
-      var last = first + 6;
-      console.log(first, last);
-      return "from date - to date";
+      var first = moment().startOf('week');
+      var last = moment().endOf('week');
+      return first.format("MMM D" + " - " + last.format("MMM D"))
     },
     waitPopup(el, data, config) {
       config.hoveringOver = el;
