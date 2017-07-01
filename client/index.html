@@ -54,7 +54,7 @@
     .header {
       text-transform: uppercase;
     }
-    .feed {
+    #maincontent {
       width: 500px;
       float: left;
       margin-left: 190px;
@@ -142,27 +142,6 @@
       border: 1px solid #ddd;
       position: absolute;
     }
-    #reactPopup {
-      width: 370px;
-      border-radius: 20px;
-      background-color: #FFF;
-      padding: 5px 10px;
-    }
-    #reactPopup .fa {
-      font-size: 25px;
-      line-height: 40px;
-      color: white;
-    }
-    #reactPopup .yellow .fa {
-      color: black;
-    }
-    #reactPopup .circle {
-      width: 40px;
-      height: 40px;
-      border-radius: 20px;
-      display: inline-block;
-      margin: 0 10px 0 0;
-    }
     .yellow {
       background-color: #f5dfa3;
     }
@@ -171,53 +150,6 @@
     }
     .blue {
       background-color: #476ebc;
-    }
-    #cardPopup {
-      width: 370px;
-      background: url('flag.jpg');
-      background-size: 370px 137px;
-      background-repeat: no-repeat;
-      background-color: #FFF;
-    }
-    #cardPopup > img {
-      width: 100px;
-      float: left;
-      margin: 90px 8px 40px 10px;
-      padding: 5px;
-      border: 1px solid #bbb;
-      background-color: #FFF;
-    }
-    #cardPopup .gradient {
-      margin-top: 43px;
-      height: 93px;
-      width: 100%;
-      position: absolute;
-      z-index: -1;
-      background-image: linear-gradient(transparent, rgba(0,0,0,.1) 20%, rgba(0,0,0,.2) 33%, rgba(0,0,0,.35) 50%, rgba(0,0,0,.56) 75%, rgba(0,0,0,.7));
-    }
-    #cardPopup .user {
-      margin: 100px 10px 0 110px;
-    }
-    #cardPopup .name {
-      color: #fff;
-      font-size: 16px;
-      font-weight: 900;
-    }
-    #cardPopup .footer {
-      background-color: #ddd;
-      clear: both;
-      height: 30px;
-      padding: 5px 0 0 60px;
-    }
-    #cardPopup .statuses {
-      margin: 25px 10px 0 16px;
-      font-size: 12px;
-    }
-    #cardPopup .status {
-      margin-bottom: 10px;
-    }
-    #cardPopup .fa, #cardPopup .footer {
-      font-size: 12px;
     }
     .status .fa {
       float: left;
@@ -231,39 +163,6 @@
     }
     .grey {
       color: #888;
-    }
-    .trending li:hover .title {
-      text-decoration: underline;
-    }
-    .trending i {
-      margin-left: 10px;
-      color: #337ab7;
-      float: left;
-    }
-    .trending article {
-      margin-left: 30px;
-    }
-    .trending a:hover {
-      text-decoration: none;
-    }
-    .trending .title {
-      font-weight: bold;
-    }
-    .trendingTypes {
-      position: absolute;
-      top: 5px;
-      right: 5px;
-    }
-    .trendingTypes i {
-      color: darkgray;
-      padding: 5px;
-    }
-    .trendingTypes i:hover {
-      color: #337ab7;
-    }
-    .trendingTypes i.selected {
-      border-bottom: 1px solid #337ab7;
-      color: #337ab7;
     }
     .page .tabContent {
       border-bottom: 2px solid darkgray;
@@ -315,214 +214,25 @@
           <li><span class="icon"><i class="fa fa-newspaper-o"></i></span> News Feed</li>
           <li><span class="icon"><i class="fa fa-comments-o"></i></span> Messenger</li>
         </ul>
-        <div class="header">Shortcuts</div>
-        <ul>
-          <li v-for="item in shortcuts"><span class="icon"></span>{{item.Name | truncate(15)}}</li>
-        </ul>
-        <div class="header">Explore</div>
-        <ul>
-          <li v-for="item in exploresFiltered || explores"><span class="icon"><i :class="'fa '+item.Icon"></i></span> {{item.Name | truncate(15)}}</li>
-          <a v-on:click="exploresFiltered = undefined"><li v-if="exploresFiltered"><i class="fa fa-caret-down"></i> See More...</li></a>
-        </ul>
+        <shortcuts></shortcuts>
+        <explores></explores>>
         <div class="header">Create</div>
         <div class="footer"><a>Ad</a> · <a>Page</a> · <a>Group</a> · <a>Event</a> · <a>Fundraiser</a></a></div>
       </div>
-      <div class="feed">
-        <div class="data" v-show="data">
-          <ul class="list-group">
-            <li class="list-group-item" v-for="item in data">
-              <div class="post">
-                <img :src="thumbPrefix + item.ProfileImage" class="avatar" />
-                <div><a :href="'/user/'+item.UserID" v-on:mouseenter="waitPopup($event.target, item, cardPopup)" v-on:mouseleave="waitClearPopup(cardPopup)">{{ item.Name }}</a></div>
-                <div class="date"><a :href="'/post/'+item.PostID" :title="item.PostDate | formatDate">{{ item.PostDate | relativeDate }}</a></div>
-                <div class="message" v-if="item.Post.length > 480 && !item.seeMore">{{ item.Post | truncate }} <a v-on:click="$set(item, 'seeMore', true);">See More</a></div>
-                <div class="message" v-else>{{ item.Post }}</div>
-                <div class="image" v-if="item.SharedImage"><img :src="item.SharedImage"/></div>
-                <div class="video" v-if="item.SharedVideo"><iframe width="470" height="315" :src="item.SharedVideo"></iframe></div>
-                <div class="react">
-                  <span><a href="like" v-on:mouseenter="waitPopup($event.target, item, reactPopup)" v-on:mouseleave="waitClearPopup(reactPopup)" title="Like"><i class="fa fa-thumbs-o-up"></i> Like</a></span>
-                  <span><i class="fa fa-comment-o" title="Comment"></i> Comment</span>
-                </div>
-              </div>
-              <div class="comments" v-if="item.Comments.length > 0">
-                <div class="summary">
-                  <a :href="item.Comments[0].Name" v-on:mouseenter="waitPopup($event.target, item.Comments[0], cardPopup)" v-on:mouseleave="waitClearPopup(cardPopup)">{{ item.Comments[0].Name }}</a> and <a href="details">{{ item.Comments.length }} others</details>
-                </div>
-                <ul>
-                  <li v-for="comment in item.Comments">
-                    <div class="comment">
-                      <img :src="thumbPrefix + comment.ProfileImage" class="avatar" />
-                      <div>
-                        <a :href="'/user/'+comment.UserID" v-on:mouseenter="waitPopup($event.target, comment, cardPopup)" v-on:mouseleave="waitClearPopup(cardPopup)">{{ comment.Name }}</a> {{ comment.Post }}
-                        <div>
-                          <span><a href="like" v-on:mouseenter="waitPopup($event.target, comment, reactPopup)" v-on:mouseleave="waitClearPopup(reactPopup)">Like</a></span>
-                          <span role="presentation" aria-hidden="true"> · </span>
-                          <span><a href="reply">Reply</a></span>
-                          <span role="presentation" aria-hidden="true"> - </span>
-                          <span class="date"><a :href="'/post/'+item.PostID" :title="comment.PostDate | formatDate">{{ comment.PostDate | relativeDate }}</a></span>
-                        </div>
-                      </div>
-                      <div class="reply">
-                        <ul>
-                          <li v-for="reply in comment.Comments">
-                            <div class="reply">
-                              <img :src="thumbPrefix + reply.ProfileImage" class="avatar" />
-                              <div>
-                                <a :href="'/user/'+reply.UserID" v-on:mouseenter="waitPopup($event.target, reply, cardPopup)" v-on:mouseleave="waitClearPopup(cardPopup)">{{ reply.Name }}</a> {{ reply.Post }}
-                                <div>
-                                  <span><a href="like" v-on:mouseenter="waitPopup($event.target, reply, reactPopup)" v-on:mouseleave="waitClearPopup(reactPopup)">Like</a></span>
-                                  <span role="presentation" aria-hidden="true"> · </span>
-                                  <span><a href="reply">Reply</a></span>
-                                  <span role="presentation" aria-hidden="true"> - </span>
-                                  <span class="date"><a :href="'/post/'+item.PostID" :title="reply.PostDate | formatDate">{{ reply.PostDate | relativeDate }}</a></span>
-                                </div>
-                              </div>
-                            </div>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-            </li>
-        </div>
+      <div id="maincontent">
+        <feed></feed>
       </div>
       <div id="rightnav">
-        <div id="pages" class="list-group-item">
-          <div class="title">Your Pages</div>
-          <div v-if="pages[selectedPageIndex]">
-            <a :href="'/pages/' + selectedPageIndex" v-on:mouseenter="waitPopup($event.target, pages[selectedPageIndex], pagePopup)" v-on:mouseleave="waitClearPopup(pagePopup)">{{ pages[selectedPageIndex].Name }}</a>
-            <span title="Messages"><a href="/messages" role="button"><i class="fa fa-comments-o"></i> Messages</a></span>
-            <span title="Notifications"><a href="/notifications" role="button"><i class="fa fa-bell"></i> Notifications</a></span>
-            <div class="actions">
-              <span title="Publish"><i class="fa fa-edit"></i> Publish</span>
-              <span title="Photo"><i class="fa fa-camera"></i> Photo</span>
-              <span title="Event"><i class="fa fa-calendar-o"></i> Event</span>
-              <span title="Promote"><i class="fa fa-bullhorn"></i> Promote</span>
-            </div>
-            <div class="tabNav">
-              <span>Likes</span>
-              <span>Views</span>
-              <span>Posts</span>
-            </div>
-            <div class="tabContent">
-              <div name="likes">
-                <div class="big">{{ pages[selectedPageIndex].Likes }}</div>
-                <div>{{ pages[selectedPageIndex].LikesThisWeek }}</div>
-              </div>
-              <div name="views">
-                <div>{{ getCurrentWeekRange() }}</div>
-                <div class="big">
-                  <span>{{ pages[selectedPageIndex].Views }}</span>
-                  <span>{{ pages[selectedPageIndex].PostEngagements }}</span>
-                </div>
-              </div>
-              <div name="posts">
-                <div>{{ getCurrentWeekRange() }}</div>
-                <div class="big">
-                  <span>{{ pages[selectedPageIndex].PostComments }}</span>
-                  <span>{{ pages[selectedPageIndex].PostShares }}</span>
-                </div>
-              </div>
-            </div>
-            <div class="ad">
-              <div class="title">{{ pages[selectedPageIndex].AdTitle }}</div>
-              <img :src="pages[selectedPageIndex].ImageURL" /> 
-              <div class="description">{{ pages[selectedPageIndex].AdText }}</div>
-              <button>{{ pages[selectedPageIndex].AdButtonText }}</button>
-            </div>
-            <div class="recentPosts">
-              <ul>
-                <li v-for="item in pages[selectedPageIndex].RecentPosts">
-                  <img src="endfirst.png"/>
-                  <div class="title">EndFirst</div>
-                  <div class="date">{{ item.PostDate | relativeDate }}</div>
-                  <div class="content">{{ item.Post | truncate(40) }}</div>
-                </li>
-              </ul>
-          </div>
-          <div v-else>Loading</div>
-        </div>
-        <div class="list-group-item">
-          <a :href="'/events/'" v-on:mouseenter="waitPopup($event.target, events, eventPopup)" v-on:mouseleave="waitClearPopup(eventPopup)">{{events.length + ' event invites'}}</a>
-        </div>
-        <div class="list-group-item trending">
-          <h1>Trending</h1>
-          <span class="trendingTypes">
-            <i class="fa fa-line-chart" :class="{ selected:trendingCategory=='News' }" title="News" v-on:click="setTrendingCategory('News')"></i>
-            <i class="fa fa-institution" :class="{ selected:trendingCategory=='Politics' }" title="Politics" v-on:click="setTrendingCategory('Politics')"></i>
-            <i class="fa fa-flask" :class="{ selected:trendingCategory=='Tech' }" title="Science and Technology" v-on:click="setTrendingCategory('Tech')"></i>
-            <i class="fa fa-futbol-o" :class="{ selected:trendingCategory=='Sports' }" title="Sports" v-on:click="setTrendingCategory('Sports')"></i>
-            <i class="fa fa-film" :class="{ selected:trendingCategory=='Entertainment' }" title="Entertainment" v-on:click="setTrendingCategory('Entertainment')"></i>
-          </span>
-          <ul>
-            <li v-for="item in trendingFiltered" v-on:mouseenter="waitPopup($event.target, item, trendingPopup)" v-on:mouseleave="waitClearPopup(trendingPopup)">
-              <i class="fa fa-bolt"></i>
-              <a :href="item.Url"><article><div class="title">{{item.Title | truncate(25) }}</div>
-              <div class="description">{{item.Description | truncate(55) }} <span class="grey">- {{item.Url | urlDomain }}</span></div></article></a>
-            </li>
-            <li v-if="trendingFiltered.length == 3"><a v-on:click="trendingFiltered = trending[trendingCategory];"><i class="fa fa-caret-down"></i> See More...</a></li>
-          </ul>
-        </div>
-        <div class="list-group-item">
-          <h1>Ads</h1>
-          <ul>
-            <li v-for="item in ads">
-              <a :href="item.LinkURL"><img :src="item.ImageURL"/>
-              <div>{{item.Title}}</div>
-              <div>{{item.Website}}</div>
-              <div>{{item.Text}}</div></a>
-            </li>
-          </ul>
-        </div>
-        <div class="list-group-item">
-          English (US) · <a>Espanol</a> · <a>Portugues (Brasil)</a> · <a>Francais (France)</a> · <a>Deutsch</a>
-        </div>
+        <pages id="pages" class="list-group-item"></pages>
+        <events class="list-group-item"></events>
+        <trending class="list-group-item"></trending>
+        <ads class="list-group-item"></ads>
+        <languages class="list-group-item"></languages>
         <div>Privacy · Terms · Advertising · Ad Choices · Cookies · More · 
         Clonebook © 2017</div>
       </div>
-      <div id="reactPopup" class="popup" v-show="reactPopup.visible" v-on:mouseenter="reactPopup.hoveringOver = $el" v-on:mouseleave="waitClearPopup(reactPopup)">
-        <span class="circle blue"><i class="fa fa-thumbs-up"></i></span>
-        <span class="circle red"><i class="fa fa-heart"></i></span>
-        <span class="circle yellow"><i class="fa fa-smile-o"></i></span>
-        <span class="circle yellow"><i class="fa fa-smile-o"></i></span>
-        <span class="circle yellow"><i class="fa fa-frown-o"></i></span>
-        <span class="circle yellow"><i class="fa fa-frown-o"></i></span>
-      </div>
-      <div id="cardPopup" class="popup" v-show="cardPopup.visible" v-on:mouseenter="cardPopup.hoveringOver = $el" v-on:mouseleave="waitClearPopup(cardPopup)">
-        <img :src="this.largePrefix + selected.ProfileImage" v-if="selected.ProfileImage"/>
-        <div class="gradient"></div>
-        <div class="user">
-          <div class="name">{{selected.Name}}</div>
-          <div class="statuses">
-            <div class="status">
-              <i class="fa fa-map-marker"></i>
-              <div class="action">
-                Visited <a href="https://www.google.com/maps/place/Burbank,+CA">Burbank, California</a>
-                <div class="time">on Monday</div>
-              </div>
-            </div>
-            <div class="status">
-              <i class="fa fa-user"></i>
-              <div class="action">80 mutual friends including <a :href="'/user/'+selected.UserID">Person 1</a></div>
-            </div>
-          </div>
-        </div>
-        <div class="footer">
-          <button><i class="fa fa-check"></i> Friends <i class="fa fa-sort-down"></i></button>
-          <button><i class="fa fa-check"></i> Following <i class="fa fa-sort-down"></i></button>
-          <button><i class="fa fa-comments-o"></i> Message</button>
-        </div>
-      </div>
       <div id="pagePopup" class="popup" v-show="pagePopup.visible" v-on:mouseenter="pagePopup.hoveringOver = $el" v-on:mouseleave="waitClearPopup(pagePopup)">
         <h1>Page popup</h1>
-      </div>
-      <div id="eventPopup" class="popup" v-show="eventPopup.visible" v-on:mouseenter="eventPopup.hoveringOver = $el" v-on:mouseleave="waitClearPopup(eventPopup)">
-        <h1>Event popup</h1>
-      </div>
-      <div id="trendingPopup" class="popup" v-show="trendingPopup.visible" v-on:mouseenter="trendingPopup.hoveringOver = $el" v-on:mouseleave="waitClearPopup(trendingPopup)">
-        <h1>Trending popup</h1>
       </div>
     </div>
   </div>
