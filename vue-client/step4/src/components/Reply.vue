@@ -21,6 +21,12 @@
   </div>
 </template>
 
+<style>
+  .reply > ul {
+    margin: 10px 0 0 0;
+  }
+</style>  
+
 <script>
 export default {
   name: 'reply',

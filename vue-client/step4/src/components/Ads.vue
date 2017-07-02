@@ -16,6 +16,9 @@
 </template>
 
 <script>
+import axios from 'axios';
+import { PopupMixin } from './mixins';
+
 export default {
   name: 'ads',
   created() {
@@ -25,17 +28,17 @@ export default {
     return {
       ads: [],
       adsPopup: { visible: false, elementId: 'adsPopup', preferredLocation: 'left' },
-    }
+    };
   },
   methods: {
     getAds() {
       axios.get('/api/ads').then((response) => {
         this.ads = response.data;
       }).catch((response) => {
-        console.log("error", response);
+        console.log('error', response);
       });
     },
   },
-  mixins: [popupMixin]
-}
+  mixins: [PopupMixin],
+};
 </script>

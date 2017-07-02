@@ -32,9 +32,102 @@
   </div>
 </template>
 
+<style>
+  form {
+    display: inline-block;
+  }
+  .page {
+    margin: 60px auto 0 auto;
+    width: 988px;
+  }
+  #leftnav {
+    width: 180px;
+    position: fixed;
+    padding-top: 10px;
+  }
+  #leftnav li {
+    color: #666;
+    cursor: pointer;
+    padding: 4px 6px;
+  }
+  #leftnav li:hover {
+    background-color: #ddd;
+  }
+  #leftnav .icon {
+    width: 22px;
+    display: inline-block;
+  }
+  #leftnav .header {
+    text-transform: uppercase;
+  }
+  #maincontent {
+    width: 500px;
+    float: left;
+    margin-left: 190px;
+  }
+  #rightnav {
+    width: 308px;
+    position: fixed;
+    margin-left: 700px;
+  }
+  .list-group-item {
+    margin-top: 10px;
+    padding: 0;
+    position: relative; 
+    display: block;
+    margin-bottom: -1px;
+    border: 1px solid #ddd;
+  }
+  .miniprofile {
+    width: 24px;
+  }
+  .avatar {
+    float: left;
+    width: 40px;
+    margin-right: 10px;
+  }
+  .date > a {
+    color: #999;
+  }
+  .date {
+    font-size: 12px;
+  }
+  .popup {
+    z-index: 10000;
+    border: 1px solid #ddd;
+    position: absolute;
+  }
+  .status .fa {
+    float: left;
+  }
+  .status .action {
+    margin-left: 20px;
+    width: 210px;
+  }
+  .description {
+    color: #222;
+  }
+  .grey {
+    color: #888;
+  }
+  .page .tabContent {
+    border-bottom: 2px solid darkgray;
+  }
+</style>
+
 <script>
 import axios from 'axios';
+import ads from './Ads';
+import comments from './Comments';
+import events from './Events';
+import feed from './Feed';
+import languages from './Languages';
 import navbar from './Navbar';
+import pages from './Pages';
+import shortcuts from './Shortcuts';
+import explores from './Explores';
+import trending from './Trending';
+import { ImagePrefixMixin } from './mixins';
 
 export default {
   name: 'home',
@@ -46,13 +139,12 @@ export default {
     window.removeEventListener('scroll', this.handleScroll);
   },
   components: {
-    navbar,
+    ads, comments, events, explores, feed, navbar, languages, pages, shortcuts, trending,
   },
   data() {
     return {
       me: undefined,
       selected: {},
-      pagePopup: { visible: false, elementId: 'pagePopup', preferredLocation: 'left' },
     };
   },
   methods: {
@@ -66,7 +158,7 @@ export default {
       const rect = pane.getBoundingClientRect();
 
       if (rect.bottom > window.innerHeight || -window.pageYOffset + headerHeight > rect.top) {
-        pane.style.top = `${-window.pageYOffset + headerHeight} px`; // eslint-disable-line no-param-reassign
+        pane.style.top = `${-window.pageYOffset + headerHeight} px`;
       }
     },
     getDocHeight() { // calculates document height same way as jquery does
@@ -88,9 +180,6 @@ export default {
       });
     },
   },
-  // mixins: [popupMixin, imagePrefixMixin],
+  mixins: [ImagePrefixMixin],
 };
 </script>
-
-<style>
-</style>

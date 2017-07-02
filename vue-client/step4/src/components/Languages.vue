@@ -6,6 +6,6 @@
 
 <script>
 export default {
-  name: 'languages'
-}
+  name: 'languages',
+};
 </script>

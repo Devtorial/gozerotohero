@@ -9,6 +9,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'explores',
   created() {
@@ -18,7 +20,7 @@ export default {
     return {
       explores: [],
       exploresFiltered: [],
-    }
+    };
   },
   methods: {
     getExplores() {
@@ -26,9 +28,9 @@ export default {
         this.explores = response.data;
         this.exploresFiltered = this.explores.slice(0, 10);
       }).catch((response) => {
-        console.log("error", response);
+        console.log('error', response);
       });
     },
-  }
-}
+  },
+};
 </script>

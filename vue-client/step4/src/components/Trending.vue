@@ -59,6 +59,9 @@
 </style>
 
 <script>
+import axios from 'axios';
+import { PopupMixin } from './mixins';
+
 export default {
   name: 'trending',
   created() {
@@ -70,7 +73,7 @@ export default {
       trendingFiltered: [],
       trendingCategory: 'News',
       trendingPopup: { visible: false, elementId: 'trendingPopup', preferredLocation: 'left' },
-    }
+    };
   },
   methods: {
     getTrending() {
@@ -78,7 +81,7 @@ export default {
         this.trending = response.data;
         this.trendingFiltered = this.trending[this.trendingCategory].slice(0, 3);
       }).catch((response) => {
-        console.log("error", response);
+        console.log('error', response);
       });
     },
     setTrendingCategory(category) {
@@ -86,6 +89,6 @@ export default {
       this.trendingFiltered = this.trending[category];
     },
   },
-  mixins: [popupMixin]
-}
+  mixins: [PopupMixin],
+};
 </script>

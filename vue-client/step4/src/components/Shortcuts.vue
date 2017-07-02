@@ -8,6 +8,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'shortcuts',
   created() {
@@ -16,16 +18,16 @@ export default {
   data() {
     return {
       shortcuts: [],
-    }
+    };
   },
   methods: {
     getShortcuts() {
       axios.get('/api/shortcuts').then((response) => {
         this.shortcuts = response.data;
       }).catch((response) => {
-        console.log("error", response);
+        console.log('error', response);
       });
     },
-  }
-}
+  },
+};
 </script>

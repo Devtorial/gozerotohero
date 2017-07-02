@@ -9,6 +9,9 @@
 </template>
 
 <script>
+import axios from 'axios';
+import { PopupMixin } from './mixins';
+
 export default {
   name: 'events',
   created() {
@@ -18,17 +21,17 @@ export default {
     return {
       events: [],
       eventPopup: { visible: false, elementId: 'eventPopup', preferredLocation: 'left' },
-    }
+    };
   },
   methods: {
     getEvents() {
       axios.get('/api/events').then((response) => {
         this.events = response.data;
       }).catch((response) => {
-        console.log("error", response);
+        console.log('error', response);
       });
     },
   },
-  mixins: [popupMixin]
-}
+  mixins: [PopupMixin],
+};
 </script>

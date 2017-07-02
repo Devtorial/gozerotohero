@@ -55,6 +55,40 @@
 </template>
 
 <style>
+  .post {
+    padding: 10px 15px;
+  }
+  .yellow {
+    background-color: #f5dfa3;
+  }
+  .red {
+    background-color: #c5243a;
+  }
+  .blue {
+    background-color: #476ebc;
+  }
+  .react {
+    width: 100%;
+    border-top: 1px solid #ddd;
+    margin-top: 10px;
+  }
+  .react > span {
+    display: inline-block;
+    margin-top: 10px;
+    margin-right: 20px;
+  }
+  .message {
+    clear: both;
+    margin-top: 5px;
+    font-size: 15px;
+  }
+  .image, .video {
+    margin-top: 10px;
+  }
+  .image > img {
+    width: 470px;
+  }
+
   #reactPopup {
     width: 370px;
     border-radius: 20px;
@@ -78,7 +112,7 @@
   }
   #cardPopup {
     width: 370px;
-    background: url('flag.jpg');
+    /*background: url('../assets/flag.jpg');*/
     background-size: 370px 137px;
     background-repeat: no-repeat;
     background-color: #FFF;
@@ -126,6 +160,9 @@
 </style>
 
 <script>
+import axios from 'axios';
+import { PopupMixin, ImagePrefixMixin } from './mixins';
+
 export default {
   name: 'feed',
   created() {
@@ -138,21 +175,21 @@ export default {
       selected: {},
       cardPopup: { visible: false, elementId: 'cardPopup' },
       reactPopup: { visible: false, elementId: 'reactPopup', preferredLocation: 'top' },
-    }
+    };
   },
   methods: {
     getFeed() {
-      this.page++;
+      this.page += 1;
       axios.get(`/api/feed/${this.page}`).then((response) => {
         this.feed.push(...response.data);
         this.error = undefined;
         // TODO: Remove
         this.selected = this.feed[0];
       }).catch((response) => {
-        console.log("error", response);
+        console.log('error', response);
       });
     },
   },
-  mixins: [popupMixin, imagePrefixMixin]
-}
+  mixins: [PopupMixin, ImagePrefixMixin],
+};
 </script>

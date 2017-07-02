@@ -83,6 +83,9 @@
 </style>
 
 <script>
+import axios from 'axios';
+import moment from 'moment';
+
 export default {
   name: 'pages',
   created() {
@@ -91,22 +94,23 @@ export default {
   data() {
     return {
       pages: [],
-      selectedPageIndex: 0
-    }
+      selectedPageIndex: 0,
+      pagePopup: { visible: false, elementId: 'pagePopup', preferredLocation: 'left' },
+    };
   },
   methods: {
     getPages() {
       axios.get('/api/pages').then((response) => {
         this.pages = response.data;
       }).catch((response) => {
-        console.log("error", response);
+        console.log('error', response);
       });
     },
     getCurrentWeekRange() {
-      var first = moment().startOf('week');
-      var last = moment().endOf('week');
-      return first.format("MMM D" + " - " + last.format("MMM D"))
+      const first = moment().startOf('week');
+      const last = moment().endOf('week');
+      return `${first.format('MMM D')} - ${last.format('MMM D')}`;
     },
-  }
-}
+  },
+};
 </script>
