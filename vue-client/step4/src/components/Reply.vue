@@ -1,0 +1,31 @@
+<template>
+  <div class="reply">
+    <ul>
+      <li v-for="reply in replies">
+        <div class="reply">
+          <img :src="thumbPrefix + reply.ProfileImage" class="avatar" />
+          <div>
+            <a :href="'/user/'+reply.UserID" v-on:mouseenter="waitPopup($event.target, reply, cardPopup)" v-on:mouseleave="waitClearPopup(cardPopup)">{{ reply.Name }}</a>
+            {{ reply.Post }}
+            <div>
+              <span><a href="like" v-on:mouseenter="waitPopup($event.target, reply, reactPopup)" v-on:mouseleave="waitClearPopup(reactPopup)">Like</a></span>
+              <span role="presentation" aria-hidden="true"> · </span>
+              <span><a href="reply">Reply</a></span>
+              <span role="presentation" aria-hidden="true"> - </span>
+              <span class="date"><a :href="'/post/'+postid" :title="reply.PostDate | formatDate">{{ reply.PostDate | relativeDate }}</a></span>
+            </div>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'reply',
+  props: ['replies', 'postid', 'cardPopup', 'reactPopup'],
+  mixins: [popupMixin, imagePrefixMixin]
+}
+</script>
+

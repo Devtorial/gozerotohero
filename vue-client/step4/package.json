@@ -1,5 +1,5 @@
 {
-  "name": "step3-webpack",
+  "name": "step4",
   "version": "1.0.0",
   "description": "Devtorial zero to hero tutorial",
   "author": "Rob Archibald <rob.archibald@devtorial.com>",
@@ -14,6 +14,7 @@
     "lint": "eslint --ext .js,.vue src test/unit/specs test/e2e/specs"
   },
   "dependencies": {
+    "axios": "^0.16.2",
     "vue": "^2.3.3",
     "vue-router": "^2.3.1"
   },
