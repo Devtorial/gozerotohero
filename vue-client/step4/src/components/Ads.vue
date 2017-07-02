@@ -32,7 +32,7 @@ export default {
   },
   methods: {
     getAds() {
-      axios.get('/api/ads').then((response) => {
+      axios.get('http://localhost:1234/api/ads').then((response) => {
         this.ads = response.data;
       }).catch((response) => {
         console.log('error', response);

@@ -24,7 +24,7 @@ export default {
   },
   methods: {
     getExplores() {
-      axios.get('/api/explores').then((response) => {
+      axios.get('http://localhost:1234/api/explores').then((response) => {
         this.explores = response.data;
         this.exploresFiltered = this.explores.slice(0, 10);
       }).catch((response) => {

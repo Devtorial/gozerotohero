@@ -25,7 +25,7 @@ export default {
   },
   methods: {
     getEvents() {
-      axios.get('/api/events').then((response) => {
+      axios.get('http://localhost:1234/api/events').then((response) => {
         this.events = response.data;
       }).catch((response) => {
         console.log('error', response);

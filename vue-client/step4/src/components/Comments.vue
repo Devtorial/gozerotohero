@@ -52,9 +52,11 @@
 
 <script>
 import { PopupMixin, ImagePrefixMixin } from './mixins';
+import reply from './Reply';
 
 export default {
   name: 'comments',
+  components: { reply },
   props: ['comments', 'postid', 'cardPopup', 'reactPopup'],
   mixins: [PopupMixin, ImagePrefixMixin],
 };

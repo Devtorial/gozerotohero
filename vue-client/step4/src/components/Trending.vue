@@ -77,7 +77,7 @@ export default {
   },
   methods: {
     getTrending() {
-      axios.get('/api/trending').then((response) => {
+      axios.get('http://localhost:1234/api/trending').then((response) => {
         this.trending = response.data;
         this.trendingFiltered = this.trending[this.trendingCategory].slice(0, 3);
       }).catch((response) => {

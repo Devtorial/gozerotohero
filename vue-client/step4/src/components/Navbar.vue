@@ -45,5 +45,6 @@
 <script>
 export default {
   name: 'navbar',
+  props: ['me'],
 };
 </script>

@@ -100,7 +100,7 @@ export default {
   },
   methods: {
     getPages() {
-      axios.get('/api/pages').then((response) => {
+      axios.get('http://localhost:1234/api/pages').then((response) => {
         this.pages = response.data;
       }).catch((response) => {
         console.log('error', response);

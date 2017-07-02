@@ -1,12 +1,31 @@
 <template>
   <div id="app">
-    <router-view></router-view>
+    <router-view :me="me"></router-view>
   </div>
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'app',
+  created() {
+    this.getLoggedInUser();
+  },
+  data() {
+    return {
+      me: undefined,
+    };
+  },
+  methods: {
+    getLoggedInUser() {
+      axios.get('http://localhost:1234/api/users/me').then((response) => {
+        this.me = response.data;
+      }).catch((response) => {
+        console.log('error', response);
+      });
+    },
+  },
 };
 </script>
 

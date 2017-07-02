@@ -28,10 +28,12 @@
 </style>  
 
 <script>
+import { PopupMixin, ImagePrefixMixin } from './mixins';
+
 export default {
   name: 'reply',
   props: ['replies', 'postid', 'cardPopup', 'reactPopup'],
-  mixins: [popupMixin, imagePrefixMixin]
-}
+  mixins: [PopupMixin, ImagePrefixMixin],
+};
 </script>
 

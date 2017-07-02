@@ -12,7 +12,7 @@
           <li><span class="icon"><i class="fa fa-comments-o"></i></span> Messenger</li>
         </ul>
         <shortcuts></shortcuts>
-        <explores></explores>>
+        <explores></explores>
         <div class="header">Create</div>
         <div class="footer"><a>Ad</a> · <a>Page</a> · <a>Group</a> · <a>Event</a> · <a>Fundraiser</a></a></div>
       </div>
@@ -116,7 +116,6 @@
 </style>
 
 <script>
-import axios from 'axios';
 import ads from './Ads';
 import comments from './Comments';
 import events from './Events';
@@ -132,7 +131,6 @@ import { ImagePrefixMixin } from './mixins';
 export default {
   name: 'home',
   created() {
-    this.getLoggedInUser();
     window.addEventListener('scroll', this.handleScroll);
   },
   destroyed() {
@@ -143,7 +141,6 @@ export default {
   },
   data() {
     return {
-      me: undefined,
       selected: {},
     };
   },
@@ -172,14 +169,8 @@ export default {
         this.getFeed();
       }
     },
-    getLoggedInUser() {
-      axios.get('/api/users/me').then((response) => {
-        this.me = response.data;
-      }).catch((response) => {
-        console.log('error', response);
-      });
-    },
   },
+  props: ['me'],
   mixins: [ImagePrefixMixin],
 };
 </script>

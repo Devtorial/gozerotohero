@@ -9,9 +9,11 @@
 
 <script>
 import axios from 'axios';
+import { truncate } from './filters';
 
 export default {
   name: 'shortcuts',
+  components: { truncate },
   created() {
     this.getShortcuts();
   },
@@ -22,7 +24,7 @@ export default {
   },
   methods: {
     getShortcuts() {
-      axios.get('/api/shortcuts').then((response) => {
+      axios.get('http://localhost:1234/api/shortcuts').then((response) => {
         this.shortcuts = response.data;
       }).catch((response) => {
         console.log('error', response);

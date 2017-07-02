@@ -161,13 +161,16 @@
 
 <script>
 import axios from 'axios';
+import comments from './Comments';
 import { PopupMixin, ImagePrefixMixin } from './mixins';
+import { truncate } from './filters';
 
 export default {
   name: 'feed',
   created() {
     this.getFeed();
   },
+  components: { comments, truncate },
   data() {
     return {
       page: 0,
@@ -180,7 +183,7 @@ export default {
   methods: {
     getFeed() {
       this.page += 1;
-      axios.get(`/api/feed/${this.page}`).then((response) => {
+      axios.get(`http://localhost:1234/api/feed/${this.page}`).then((response) => {
         this.feed.push(...response.data);
         this.error = undefined;
         // TODO: Remove
