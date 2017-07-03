@@ -25,6 +25,18 @@ export const PopupMixin = Vue.extend({
         if (config.hoveringOver !== el) {  // not same element so exit
           return;
         }
+        if (!config.popupElement) { // initialize popupElement and parentElement properties
+          const popup = document.getElementById(config.elementId);
+          let parent = popup.parentElement;
+          let parentStyle = window.getComputedStyle(parent);
+          // find the parent element which the popup will be positioned based on
+          while (parent.parentElement && parentStyle.position === 'static') {
+            parent = parent.parentElement;
+            parentStyle = window.getComputedStyle(parent);
+          }
+          config.popupElement = popup;
+          config.parentElement = parent;
+        }
 
         const headerHeight = 50;
         const margin = 20;
@@ -33,16 +45,31 @@ export const PopupMixin = Vue.extend({
         // run on next tick so that popup will already be visible. Otherwise the height of the rectangle is 0
         Vue.nextTick(() => {
           const rect = el.getBoundingClientRect();
-          const popup = document.getElementById(config.elementId);
-          const popupHeight = popup.getBoundingClientRect().height;
-          const displayAbove = config.preferredLocation === 'top' ?
-            rect.top - headerHeight > margin + popupHeight :
-            window.innerHeight - rect.bottom <= rect.top - headerHeight;
-
-          popup.style.top = displayAbove ?
-            (rect.top + window.pageYOffset) - popupHeight - margin :
-            rect.bottom + window.pageYOffset + margin;
-          popup.style.left = rect.left;
+          const parentRect = config.parentElement.getBoundingClientRect();
+          const popupRect = config.popupElement.getBoundingClientRect();
+          const topAbove = rect.top - parentRect.top - popupRect.height - margin;
+          const topBelow = (rect.bottom - parentRect.top) + margin;
+          let top;
+          let left;
+          switch (config.preferredLocation) {
+            case 'top': {
+              const hasSpaceAbove = rect.top - headerHeight > margin + popupRect.height;
+              top = hasSpaceAbove ? topAbove : topBelow;
+              left = rect.left - parentRect.left;
+              break;
+            }
+            case 'left':
+              top = rect.top - parentRect.top;
+              left = rect.left - parentRect.left - popupRect.width;
+              break;
+            default: {
+              const isAboveCenter = window.innerHeight - rect.bottom <= rect.top - headerHeight;
+              top = isAboveCenter ? topAbove : topBelow;
+              left = rect.left - parentRect.left;
+            }
+          }
+          config.popupElement.style.top = `${top}px`;
+          config.popupElement.style.left = `${left}px`;
         });
       };
     },

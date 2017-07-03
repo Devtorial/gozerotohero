@@ -155,7 +155,7 @@ export default {
       const rect = pane.getBoundingClientRect();
 
       if (rect.bottom > window.innerHeight || -window.pageYOffset + headerHeight > rect.top) {
-        pane.style.top = `${-window.pageYOffset + headerHeight} px`;
+        pane.style.top = `${-window.pageYOffset + headerHeight}px`;
       }
     },
     getDocHeight() { // calculates document height same way as jquery does
