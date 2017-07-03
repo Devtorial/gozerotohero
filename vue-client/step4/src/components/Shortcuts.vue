@@ -2,10 +2,16 @@
   <div>
     <div class="header">Shortcuts</div>
     <ul>
-      <li v-for="item in shortcuts"><span class="icon"></span>{{item.Name | truncate(15)}}</li>
+      <li v-for="item in shortcuts"><img :src="item.ImageURL" class="img20"/> {{item.Name | truncate(15)}}</li>
     </ul>
   </div>
 </template>
+
+<style>
+  .img20 {
+    width: 20px;
+  }
+</style>
 
 <script>
 import axios from 'axios';

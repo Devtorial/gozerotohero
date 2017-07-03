@@ -335,12 +335,12 @@ var shortcuts = []struct {
 	URL      string
 	ImageURL string
 }{
-	{Name: "Ensign Symphony & Chorus", ImageURL: ""},
-	{Name: "EndFirst", ImageURL: ""},
-	{Name: "Devtorial", ImageURL: ""},
-	{Name: "Lindsey Stirling", ImageURL: ""},
-	{Name: "The Piano Guys", ImageURL: ""},
-	{Name: "Jennifer Thomas", ImageURL: ""},
+	{Name: "Ensign Symphony & Chorus", ImageURL: "images/ensign.jpg"},
+	{Name: "EndFirst", ImageURL: "images/endfirst.png"},
+	{Name: "Devtorial", ImageURL: "images/devtorial.png"},
+	{Name: "Lindsey Stirling", ImageURL: "images/lindseystirling.jpg"},
+	{Name: "The Piano Guys", ImageURL: "images/pianoguys.jpg"},
+	{Name: "Jennifer Thomas", ImageURL: "images/jenniferthomas.jpg"},
 }
 
 var explores = []struct {
