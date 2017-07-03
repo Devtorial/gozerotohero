@@ -1,13 +1,19 @@
 package main
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"math/rand"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strings"
 	"time"
+
+	"strconv"
 
 	"github.com/drhodes/golorem"
 	"github.com/julienschmidt/httprouter"
@@ -60,6 +66,11 @@ type article struct {
 	PublishedAt string
 }
 
+type option struct {
+	Display string
+	Value   string
+}
+
 type httpGetter interface {
 	Get(string) (*http.Response, error)
 }
@@ -67,19 +78,69 @@ type httpGetter interface {
 func main() {
 	// make API calls to get random data I need only once on startup rather than
 	// on each page view to ease burden on API server since this is only for testing
+	fmt.Println("Fetching fake server data...")
 	users, trending := getAPIData()
 
 	router := httprouter.New()
 	router.GET("/api/feed/:page", getFeed(users))
 	router.GET("/api/users/me", getLoggedInUser(users))
-	router.GET("/api/pages", getPages(users))
+	router.GET("/api/pages", getPages)
 	router.GET("/api/events", getEvents)
 	router.GET("/api/trending", getTrending(trending))
 	router.GET("/api/ads", getAds)
 	router.GET("/api/shortcuts", getShortcuts)
 	router.GET("/api/explores", getExplores)
-	router.NotFound = http.FileServer(http.Dir("../client")) // html client
+	router.GET("/images/*filepath", getFile(http.FileServer(http.Dir("../../")))) // root project directory
+	router.NotFound = http.FileServer(http.Dir(getClientFolder()))                // html client
 	log.Fatal(http.ListenAndServe(":1234", router))
+}
+
+func getFile(h http.Handler) func(http.ResponseWriter, *http.Request, httprouter.Params) {
+	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+		h.ServeHTTP(w, r)
+	}
+}
+
+func getClientFolder() string {
+	fmt.Println("Select which client you wish to run")
+	fmt.Println("====================================")
+	path := readSelection([]option{
+		option{"Vue", "../../vue-client"},
+		option{"React", "../../react-client"},
+		option{"Angular", "../../angular-client"}})
+
+	fmt.Println("\nSelect the step of the tutorial to run")
+	fmt.Println("=======================================")
+	path, _ = filepath.Abs(filepath.Join(path, readSelection(getDirSelections(path))))
+	fmt.Println("Serving client from:", path)
+	return path
+}
+
+func getDirSelections(path string) []option {
+	files, _ := ioutil.ReadDir(path)
+	var options []option
+	for i := range files {
+		if files[i].IsDir() {
+			folder := files[i].Name()
+			options = append(options, option{folder, folder})
+		}
+	}
+	return options
+}
+
+func readSelection(options []option) string {
+	for i := range options {
+		fmt.Printf("%d. %s\n", i+1, options[i].Display)
+	}
+	fmt.Print("Enter selection: ")
+	scanner := bufio.NewScanner(os.Stdin)
+	scanner.Scan()
+	s, err := strconv.Atoi(scanner.Text())
+	if err != nil || s < 1 || s > len(options) {
+		fmt.Printf("Invalid selection. Expected a number from 1-%d", len(options))
+		return readSelection(options)
+	}
+	return options[s-1].Value
 }
 
 func getAPIData() ([]person, *trending) {
@@ -140,30 +201,32 @@ func getFeed(people []person) func(http.ResponseWriter, *http.Request, httproute
 	}
 }
 
-func getPages(people []person) func(http.ResponseWriter, *http.Request, httprouter.Params) {
-	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-		posts := createMultiplePosts(people, time.Now(), 3)
-		pages := []struct {
-			Name            string
-			ProfileImage    string
-			Likes           int
-			LikesThisWeek   int
-			Views           int
-			PostEngagements int
-			PostComments    int
-			PostShares      int
-			AdTitle         string
-			AdText          string
-			AdImageURL      string
-			AdButtonText    string
-			RecentPosts     []feedData
-		}{
-			{Name: "EndFirst", ProfileImage: "endfirst.png", Likes: 93, LikesThisWeek: 0, Views: 14, PostEngagements: 16, PostComments: 0, PostShares: 0, AdTitle: "Promote Your Post", AdText: `Your post "As you may know, our Kickstart..." is getting more engagement than 95% of your recent posts. Boost it to reach up to 6,800 more people in Oregon.`, RecentPosts: posts},
-		}
-
-		jsonText, err := json.Marshal(pages)
-		outputMessage(w, string(jsonText), err)
+func getPages(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	posts := []feedData{
+		feedData{Name: "EndFirst", ProfileImage: "images/endfirst.png", Post: "post 1", PostDate: time.Now()},
+		feedData{Name: "EndFirst", ProfileImage: "images/endfirst.png", Post: "post 2", PostDate: time.Now().Add(-30 * time.Minute)},
+		feedData{Name: "EndFirst", ProfileImage: "images/endfirst.png", Post: "post 3", PostDate: time.Now().Add(-90 * time.Minute)},
 	}
+	pages := []struct {
+		Name            string
+		ProfileImage    string
+		Likes           int
+		LikesThisWeek   int
+		Views           int
+		PostEngagements int
+		PostComments    int
+		PostShares      int
+		AdTitle         string
+		AdText          string
+		AdImageURL      string
+		AdButtonText    string
+		RecentPosts     []feedData
+	}{
+		{Name: "EndFirst", ProfileImage: "images/endfirst.png", Likes: 93, LikesThisWeek: 0, Views: 14, PostEngagements: 16, PostComments: 0, PostShares: 0, AdTitle: "Promote Your Post", AdText: `Your post "As you may know, our Kickstart..." is getting more engagement than 95% of your recent posts. Boost it to reach up to 6,800 more people in Oregon.`, RecentPosts: posts},
+	}
+
+	jsonText, err := json.Marshal(pages)
+	outputMessage(w, string(jsonText), err)
 }
 
 func getEvents(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -321,7 +384,7 @@ var ads = []struct {
 	Website  string
 	Text     string
 }{
-	{ImageURL: "endfirst.png", LinkURL: "https://www.facebook.com/endfirstcorp/", Title: "Get EndFirst today", Website: "endfirst.com", Text: "Accelerate Business Communication with EndFirst"},
+	{ImageURL: "images/endfirst.png", LinkURL: "https://www.facebook.com/endfirstcorp/", Title: "Get EndFirst today", Website: "endfirst.com", Text: "Accelerate Business Communication with EndFirst"},
 }
 
 var events = []struct {

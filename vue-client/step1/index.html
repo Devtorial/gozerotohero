@@ -174,7 +174,7 @@
     }
     #cardPopup {
       width: 370px;
-      background: url('flag.jpg');
+      background: url('images/flag.jpg');
       background-size: 370px 137px;
       background-repeat: no-repeat;
       background-color: #FFF;
@@ -282,7 +282,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class=navbar-brand href="/"><img src="devtorial.png" alt="Devtorial logo" height="50"></a>
+          <a class=navbar-brand href="/"><img src="images/devtorial.png" alt="Devtorial logo" height="50"></a>
         </div>
         
         <div class="collapse navbar-collapse" id="navbar-collapse">
@@ -435,8 +435,8 @@
             <div class="recentPosts">
               <ul>
                 <li v-for="item in pages[selectedPageIndex].RecentPosts">
-                  <img src="endfirst.png"/>
-                  <div class="title">EndFirst</div>
+                  <img :src="item.ProfileImage"/>
+                  <div class="title">{{item.Name}}</div>
                   <div class="date">{{ item.PostDate | relativeDate }}</div>
                   <div class="content">{{ item.Post | truncate(40) }}</div>
                 </li>
