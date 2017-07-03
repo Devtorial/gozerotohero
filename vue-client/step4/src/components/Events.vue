@@ -27,9 +27,7 @@ export default {
     getEvents() {
       axios.get('http://localhost:1234/api/events').then((response) => {
         this.events = response.data;
-      }).catch((response) => {
-        console.log('error', response);
-      });
+      }).catch(() => {});
     },
   },
   mixins: [PopupMixin],

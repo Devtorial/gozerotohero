@@ -26,9 +26,7 @@ export default {
     getShortcuts() {
       axios.get('http://localhost:1234/api/shortcuts').then((response) => {
         this.shortcuts = response.data;
-      }).catch((response) => {
-        console.log('error', response);
-      });
+      }).catch(() => {});
     },
   },
 };

@@ -102,9 +102,7 @@ export default {
     getPages() {
       axios.get('http://localhost:1234/api/pages').then((response) => {
         this.pages = response.data;
-      }).catch((response) => {
-        console.log('error', response);
-      });
+      }).catch(() => {});
     },
     getCurrentWeekRange() {
       const first = moment().startOf('week');

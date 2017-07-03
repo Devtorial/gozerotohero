@@ -80,9 +80,7 @@ export default {
       axios.get('http://localhost:1234/api/trending').then((response) => {
         this.trending = response.data;
         this.trendingFiltered = this.trending[this.trendingCategory].slice(0, 3);
-      }).catch((response) => {
-        console.log('error', response);
-      });
+      }).catch(() => {});
     },
     setTrendingCategory(category) {
       this.trendingCategory = category;

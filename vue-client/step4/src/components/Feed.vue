@@ -188,9 +188,7 @@ export default {
         this.error = undefined;
         // TODO: Remove
         this.selected = this.feed[0];
-      }).catch((response) => {
-        console.log('error', response);
-      });
+      }).catch(() => {});
     },
   },
   mixins: [PopupMixin, ImagePrefixMixin],

@@ -34,9 +34,7 @@ export default {
     getAds() {
       axios.get('http://localhost:1234/api/ads').then((response) => {
         this.ads = response.data;
-      }).catch((response) => {
-        console.log('error', response);
-      });
+      }).catch(() => {});
     },
   },
   mixins: [PopupMixin],

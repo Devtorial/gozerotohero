@@ -21,9 +21,7 @@ export default {
     getLoggedInUser() {
       axios.get('http://localhost:1234/api/users/me').then((response) => {
         this.me = response.data;
-      }).catch((response) => {
-        console.log('error', response);
-      });
+      }).catch(() => {});
     },
   },
 };
