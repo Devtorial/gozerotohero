@@ -49,8 +49,8 @@
       <div class="recentPosts">
         <ul>
           <li v-for="item in pages[selectedPageIndex].RecentPosts">
-            <img src="endfirst.png"/>
-            <div class="title">EndFirst</div>
+            <img :src="item.ProfileImage"/>
+            <div class="title">{{item.Name}}</div>
             <div class="date">{{ item.PostDate | relativeDate }}</div>
             <div class="content">{{ item.Post | truncate(40) }}</div>
           </li>

@@ -112,7 +112,7 @@
   }
   #cardPopup {
     width: 370px;
-    /*background: url('../assets/flag.jpg');*/
+    background: url('/images/flag.jpg');
     background-size: 370px 137px;
     background-repeat: no-repeat;
     background-color: #FFF;

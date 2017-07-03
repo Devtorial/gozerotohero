@@ -8,7 +8,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class=navbar-brand href="/"><img src="devtorial.png" alt="Devtorial logo" height="50"></a>
+        <a class=navbar-brand href="/"><img src="images/devtorial.png" alt="Devtorial logo" height="50"></a>
       </div>
       
       <div class="collapse navbar-collapse" id="navbar-collapse">
