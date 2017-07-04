@@ -3,7 +3,7 @@
     <ul v-show="feed" class="list-group">
       <li class="list-group-item" v-for="item in feed">
         <div class="post">
-          <img :src="thumbPrefix + item.ProfileImage" class="avatar" />
+          <img :src="thumbPrefix + item.ProfileImage" class="avatar img40" />
           <div><a :href="'/user/'+item.UserID" v-on:mouseenter="waitPopup($event.target, item, cardPopup)" v-on:mouseleave="waitClearPopup(cardPopup)">{{ item.Name }}</a></div>
           <div class="date"><a :href="'/post/'+item.PostID" :title="item.PostDate | formatDate">{{ item.PostDate | relativeDate }}</a></div>
           <div class="message" v-if="item.Post.length > 480 && !item.seeMore">{{ item.Post | truncate }} <a v-on:click="$set(item, 'seeMore', true);">See More</a></div>
@@ -87,6 +87,13 @@
   }
   .image > img {
     width: 470px;
+  }
+  .status .fa {
+    float: left;
+  }
+  .status .action {
+    margin-left: 20px;
+    width: 210px;
   }
 
   #reactPopup {

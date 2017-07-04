@@ -8,7 +8,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class=navbar-brand href="/"><img src="images/devtorial.png" alt="Devtorial logo" height="50"></a>
+        <a class=navbar-brand href="/"><img src="images/devtorial.png" alt="Devtorial logo" height="30"></a>
       </div>
       
       <div class="collapse navbar-collapse" id="navbar-collapse">
@@ -34,12 +34,15 @@
 </template>
 
 <style>
-    .navbar-brand {
-      margin-top: -13px;
-    }
-    .nav .fa {
-      font-size: 15pt;
-    }
+  form {
+    display: inline-block;
+  }
+  .navbar-brand {
+    margin-top: -5px;
+  }
+  .nav .fa {
+    font-size: 15pt;
+  }
 </style>  
 
 <script>

@@ -3,7 +3,7 @@
     <ul>
       <li v-for="reply in replies">
         <div class="reply">
-          <img :src="thumbPrefix + reply.ProfileImage" class="avatar" />
+          <img :src="thumbPrefix + reply.ProfileImage" class="avatar img32" />
           <div>
             <a :href="'/user/'+reply.UserID" v-on:mouseenter="waitPopup($event.target, reply, cardPopup)" v-on:mouseleave="waitClearPopup(cardPopup)">{{ reply.Name }}</a>
             {{ reply.Post }}

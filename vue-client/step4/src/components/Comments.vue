@@ -6,7 +6,7 @@
     <ul>
       <li v-for="comment in comments">
         <div class="comment">
-          <img :src="thumbPrefix + comment.ProfileImage" class="avatar" />
+          <img :src="thumbPrefix + comment.ProfileImage" class="avatar img32" />
           <div>
             <a :href="'/user/'+comment.UserID" v-on:mouseenter="waitPopup($event.target, comment, cardPopup)" v-on:mouseleave="waitClearPopup(cardPopup)">{{ comment.Name }}</a> {{ comment.Post }}
             <div>
@@ -35,15 +35,9 @@
     padding-bottom: 10px;
     margin-bottom: 10px;
   }
-  .comments > ul  {
-    margin: 0;
-  }
   .comment {
     margin-top: 5px;
     font-size: 13px;
-  }
-  .comment .avatar {
-    width: 32px;
   }
   .comment > div {
     margin-left: 40px;

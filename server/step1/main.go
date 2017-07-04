@@ -203,9 +203,9 @@ func getFeed(people []person) func(http.ResponseWriter, *http.Request, httproute
 
 func getPages(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	posts := []feedData{
-		feedData{Name: "EndFirst", ProfileImage: "images/endfirst.png", Post: "post 1", PostDate: time.Now()},
-		feedData{Name: "EndFirst", ProfileImage: "images/endfirst.png", Post: "post 2", PostDate: time.Now().Add(-30 * time.Minute)},
-		feedData{Name: "EndFirst", ProfileImage: "images/endfirst.png", Post: "post 3", PostDate: time.Now().Add(-90 * time.Minute)},
+		feedData{Name: "EndFirst", ProfileImage: "images/endfirst.png", Post: "As you may know, our Kickstarter funding campaign was unsuccessful, but work it continuing to move forward to build out the EndFirst product. We've had to scale back some of the expectations and re-frame the product based on feedback we received during the campaign, but we're excited about the new direction. We'll provide more updates in the coming months when we're ready to share more. Thanks for your continued support and feedback!", PostDate: time.Now()},
+		feedData{Name: "EndFirst", ProfileImage: "images/endfirst.png", Post: "Hooray! We're finally ready to launch on Kickstarter! It has been a tough, but rewarding nearly 2 years since we began our journey to create an awesome communication service at the best price on the Internet. With your support, we can finish our work and improve communication for businesses and organizations around the world! We know you’re busy, but we’d love it if you’d give us a few minutes of your time to help us launch our company. Please check out our Kickstarter and contribute!", PostDate: time.Now().Add(-30 * time.Minute)},
+		feedData{Name: "EndFirst", ProfileImage: "images/endfirst.png", Post: "Just finished our Kickstarter video today and uploaded it to Kickstarter. Wow! It came together beautifully. Can't wait to get some feedback from the Kickstarter community!", PostDate: time.Now().Add(-90 * time.Minute)},
 	}
 	pages := []struct {
 		Name            string
@@ -222,7 +222,7 @@ func getPages(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		AdButtonText    string
 		RecentPosts     []feedData
 	}{
-		{Name: "EndFirst", ProfileImage: "images/endfirst.png", Likes: 93, LikesThisWeek: 0, Views: 14, PostEngagements: 16, PostComments: 0, PostShares: 0, AdTitle: "Promote Your Post", AdText: `Your post "As you may know, our Kickstart..." is getting more engagement than 95% of your recent posts. Boost it to reach up to 6,800 more people in Oregon.`, RecentPosts: posts},
+		{Name: "EndFirst", ProfileImage: "images/endfirst.png", Likes: 93, LikesThisWeek: 0, Views: 14, PostEngagements: 16, PostComments: 0, PostShares: 0, AdTitle: "Promote Your Post", AdText: `Your post "As you may know, our Kickstart..." is getting more engagement than 95% of your recent posts. Boost it to reach up to 6,800 more people in Oregon.`, AdImageURL: "images/endfirst.png", AdButtonText: "Promote Your Post", RecentPosts: posts},
 	}
 
 	jsonText, err := json.Marshal(pages)

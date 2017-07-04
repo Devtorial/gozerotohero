@@ -1,6 +1,5 @@
 <template>
   <div>
-    <h1>Ads</h1>
     <ul>
       <li v-for="item in ads">
         <a :href="item.LinkURL" v-on:mouseenter="waitPopup($event.target, item, adsPopup)" v-on:mouseleave="waitClearPopup(adsPopup)"><img :src="item.ImageURL"/>

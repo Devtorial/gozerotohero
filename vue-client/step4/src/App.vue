@@ -28,18 +28,36 @@ export default {
 </script>
 
 <style>
-    a {
-      cursor: pointer;
-    }
-    h1 {
-      font-size: 14pt;
-      margin-top: 10px;
-    }
-    ul {
-      list-style-type: none;
-      padding: 0;
-    }
-    .fa {
-      font-size: 12pt;
-    }
+  a {
+    cursor: pointer;
+  }
+  h1 {
+    font-size: 12pt;
+    font-weight: bold;
+    margin-top: 10px;
+  }
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  .fa {
+    font-size: 12pt;
+  }
+  .avatar {
+    float: left;
+    margin-right: 10px;
+  }
+  .img32 {
+    width: 32px;
+  }
+  .img40 {
+    width: 40px;
+  }
+  .img64 {
+    width: 64px;
+  }
+  .columns {
+    display: flex;
+    text-align: center;
+  }
 </style>

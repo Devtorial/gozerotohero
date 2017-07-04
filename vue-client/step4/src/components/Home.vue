@@ -33,9 +33,6 @@
 </template>
 
 <style>
-  form {
-    display: inline-block;
-  }
   .page {
     margin: 60px auto 0 auto;
     width: 988px;
@@ -81,11 +78,6 @@
   .miniprofile {
     width: 24px;
   }
-  .avatar {
-    float: left;
-    width: 40px;
-    margin-right: 10px;
-  }
   .date > a {
     color: #999;
   }
@@ -96,22 +88,13 @@
     z-index: 10000;
     border: 1px solid #ddd;
     position: absolute;
-  }
-  .status .fa {
-    float: left;
-  }
-  .status .action {
-    margin-left: 20px;
-    width: 210px;
+    background-color: #fff;
   }
   .description {
     color: #222;
   }
   .grey {
     color: #888;
-  }
-  .page .tabContent {
-    border-bottom: 2px solid darkgray;
   }
 </style>
 
