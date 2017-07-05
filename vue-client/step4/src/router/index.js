@@ -6,7 +6,7 @@ Vue.use(Router);
 
 export default new Router({
   routes: [
-    { path: '/', component: Home, props: { me: this.me } },
+    { path: '/', component: Home, props: true },
   ],
   props: ['me'],
 });

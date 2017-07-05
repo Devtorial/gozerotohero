@@ -1,6 +1,6 @@
 <template>
   <div>
-    <navbar></navbar>
+    <navbar :me="me"></navbar>
     <div class="page">
       <div id="leftnav">
         <ul v-if="me">
