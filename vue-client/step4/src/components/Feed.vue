@@ -168,14 +168,18 @@
 
 <script>
 import axios from 'axios';
-import comments from './Comments';
+import comments from './FeedComments';
 import { PopupMixin, ImagePrefixMixin } from './mixins';
 import { truncate } from './filters';
 
 export default {
   name: 'feed',
   created() {
+    window.addEventListener('scroll', this.infiniteScroll);
     this.getFeed();
+  },
+  destroyed() {
+    window.removeEventListener('scroll', this.infiniteScroll);
   },
   components: { comments, truncate },
   data() {
@@ -196,6 +200,17 @@ export default {
         // TODO: Remove
         this.selected = this.feed[0];
       }).catch(() => {});
+    },
+    getDocHeight() { // calculates document height same way as jquery does
+      const body = document.body;
+      const html = document.documentElement;
+      return Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight,
+        html.scrollHeight, html.offsetHeight);
+    },
+    infiniteScroll() { // fetch data when < 200 px from bottom
+      if (window.pageYOffset + window.innerHeight >= this.getDocHeight() - 200) {
+        this.getFeed();
+      }
     },
   },
   mixins: [PopupMixin, ImagePrefixMixin],

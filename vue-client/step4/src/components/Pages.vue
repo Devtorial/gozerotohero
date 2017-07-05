@@ -136,7 +136,7 @@
     width: 1500px !important;
   }
   #pages li {
-    width: 260px;
+    width: 250px;
     margin-right: 5px;
     padding: 10px;
   }

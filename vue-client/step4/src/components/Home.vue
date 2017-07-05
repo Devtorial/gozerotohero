@@ -100,7 +100,6 @@
 
 <script>
 import ads from './Ads';
-import comments from './Comments';
 import events from './Events';
 import feed from './Feed';
 import languages from './Languages';
@@ -120,7 +119,7 @@ export default {
     window.removeEventListener('scroll', this.handleScroll);
   },
   components: {
-    ads, comments, events, explores, feed, navbar, languages, pages, shortcuts, trending,
+    ads, events, explores, feed, navbar, languages, pages, shortcuts, trending,
   },
   data() {
     return {
@@ -131,7 +130,6 @@ export default {
     handleScroll() {
       this.scrollPane(document.getElementById('leftnav'));
       this.scrollPane(document.getElementById('rightnav'));
-      this.infiniteScroll();
     },
     scrollPane(pane) {
       const headerHeight = 60;
@@ -139,17 +137,6 @@ export default {
 
       if (rect.bottom > window.innerHeight || -window.pageYOffset + headerHeight > rect.top) {
         pane.style.top = `${-window.pageYOffset + headerHeight}px`;
-      }
-    },
-    getDocHeight() { // calculates document height same way as jquery does
-      const body = document.body;
-      const html = document.documentElement;
-      return Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight,
-        html.scrollHeight, html.offsetHeight);
-    },
-    infiniteScroll() { // fetch data when < 200 px from bottom
-      if (window.pageYOffset + window.innerHeight >= this.getDocHeight() - 200) {
-        this.getFeed();
       }
     },
   },

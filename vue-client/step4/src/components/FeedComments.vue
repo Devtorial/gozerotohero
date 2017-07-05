@@ -46,7 +46,7 @@
 
 <script>
 import { PopupMixin, ImagePrefixMixin } from './mixins';
-import reply from './Reply';
+import reply from './FeedReply';
 
 export default {
   name: 'comments',
