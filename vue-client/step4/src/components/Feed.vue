@@ -189,6 +189,7 @@ export default {
       selected: {},
       cardPopup: { visible: false, elementId: 'cardPopup' },
       reactPopup: { visible: false, elementId: 'reactPopup', preferredLocation: 'top' },
+      getFeedOnce: this.debounce(this.getFeed, 500, true),
     };
   },
   methods: {
@@ -209,8 +210,22 @@ export default {
     },
     infiniteScroll() { // fetch data when < 200 px from bottom
       if (window.pageYOffset + window.innerHeight >= this.getDocHeight() - 200) {
-        this.getFeed();
+        this.getFeedOnce();
       }
+    },
+    debounce(callback, wait, immediate) {
+      let timeout;
+      return function debounceInner(...args) {
+        const context = this;
+        const later = () => {
+          timeout = null;
+          if (!immediate) callback.apply(context, args);
+        };
+        const callNow = immediate && !timeout;
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+        if (callNow) callback.apply(context, args);
+      };
     },
   },
   mixins: [PopupMixin, ImagePrefixMixin],

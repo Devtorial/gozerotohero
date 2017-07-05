@@ -148,6 +148,8 @@
 <script>
 import axios from 'axios';
 import moment from 'moment';
+import { PopupMixin } from './mixins';
+
 
 export default {
   name: 'pages',
@@ -174,5 +176,6 @@ export default {
       return `${first.format('MMM D')} - ${last.format('MMM D')}`;
     },
   },
+  mixins: [PopupMixin],
 };
 </script>

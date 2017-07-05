@@ -23,6 +23,9 @@
 </template>
 
 <style>
+  .trending {
+    padding: 10px;
+  }
   .trending li:hover .title {
     text-decoration: underline;
   }
